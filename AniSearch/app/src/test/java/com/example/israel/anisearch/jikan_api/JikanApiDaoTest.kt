@@ -12,14 +12,14 @@ class JikanApiDaoTest {
     fun searchAnime() {
         val waiter = Object()
 
-        JikanApiDao.searchAnime("Grand Blue", 1).enqueue(object: Callback<SearchMedia<MediaAnime>?>{
-            override fun onFailure(call: Call<SearchMedia<MediaAnime>?>, t: Throwable) {
+        JikanApiDao.searchAnime("Grand Blue", 1).enqueue(object: Callback<SearchResult<MediaAnime>?>{
+            override fun onFailure(call: Call<SearchResult<MediaAnime>?>, t: Throwable) {
                 assert(false)
             }
 
             override fun onResponse(
-                call: Call<SearchMedia<MediaAnime>?>,
-                response: Response<SearchMedia<MediaAnime>?>
+                call: Call<SearchResult<MediaAnime>?>,
+                response: Response<SearchResult<MediaAnime>?>
             ) {
                 assert(response.isSuccessful)
                 val searchMedia = response.body()
@@ -44,14 +44,14 @@ class JikanApiDaoTest {
     fun searchManga() {
         val waiter = Object()
 
-        JikanApiDao.searchManga("Grand Blue", 1).enqueue(object: Callback<SearchMedia<MediaManga>?>{
-            override fun onFailure(call: Call<SearchMedia<MediaManga>?>, t: Throwable) {
+        JikanApiDao.searchManga("Grand Blue", 1).enqueue(object: Callback<SearchResult<MediaManga>?>{
+            override fun onFailure(call: Call<SearchResult<MediaManga>?>, t: Throwable) {
                 assert(false)
             }
 
             override fun onResponse(
-                call: Call<SearchMedia<MediaManga>?>,
-                response: Response<SearchMedia<MediaManga>?>
+                call: Call<SearchResult<MediaManga>?>,
+                response: Response<SearchResult<MediaManga>?>
             ) {
                 assert(response.isSuccessful)
                 val searchMedia = response.body()

@@ -7,18 +7,19 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
+import retrofit2.http.QueryMap
 import java.util.concurrent.TimeUnit
+
+private const val BASE_URL = "https://api.jikan.moe/v3/"
+private const val READ_TIMEOUT = 3000L
+private const val CONNECT_TIMEOUT = 3000L
+private const val SEARCH = "search/"
+private const val ANIME = "anime/"
+private const val MANGA = "manga/"
 
 class JikanApiDao {
 
     companion object {
-        private const val BASE_URL = "https://api.jikan.moe/v3/"
-        private const val READ_TIMEOUT = 3000L
-        private const val CONNECT_TIMEOUT = 3000L
-        private const val SEARCH = "search/"
-        private const val ANIME = "anime/"
-        private const val MANGA = "manga/"
-
         private val okHttpClient = OkHttpClient.Builder()
             .readTimeout(READ_TIMEOUT, TimeUnit.MILLISECONDS)
             .connectTimeout(CONNECT_TIMEOUT, TimeUnit.MILLISECONDS)
@@ -30,24 +31,41 @@ class JikanApiDao {
             .client(okHttpClient)
             .build()
 
-        private val apiService: JikanApiInterface = retrofit.create(
+        val apiService: JikanApiInterface = retrofit.create(
             JikanApiInterface::class.java)
 
-        fun searchAnime(query: String, page: Int): Call<SearchMedia<MediaAnime>?> {
-            return apiService.searchAnime(query, page)
+        fun searchAnime(
+            query: String,
+            page: Int,
+            type: String?,
+            status: String?,
+            rated: String?,
+            genre: Int?,
+            score: Float?,
+            startDate: String?,
+            endDate: String?
+        ): Call<SearchResult<MediaAnime>?> {
+            val queryParams = HashMap<String, String>()
+            queryParams["q"] = query
+            queryParams["page"] = page.toString()
+            if (type != null) queryParams["type"] = type
+            if (status != null) queryParams["status"] = status
+            if (rated != null) queryParams["rated"] = rated
+            if (genre != null) queryParams["genre"] = genre.toString()
+            if (score != null) queryParams["score"] = score.toString()
+            if (startDate != null) queryParams["start_date"] = startDate
+            if (endDate != null) queryParams["end_date"] = endDate
+            return apiService.searchAnime(queryParams)
         }
 
-        fun searchManga(query: String, page: Int): Call<SearchMedia<MediaManga>?> {
-            return apiService.searchManga(query, page)
-        }
     }
 
     interface JikanApiInterface {
         @GET(SEARCH + ANIME)
-        fun searchAnime(@Query("q") query: String, @Query("page") page: Int): Call<SearchMedia<MediaAnime>?>
+        fun searchAnime(@QueryMap queryParams: HashMap<String, String>): Call<SearchResult<MediaAnime>?>
 
         @GET(SEARCH + MANGA)
-        fun searchManga(@Query("q") query: String, @Query("page") page: Int): Call<SearchMedia<MediaManga>?>
+        fun searchManga(@Query("q") query: String, @Query("page") page: Int): Call<SearchResult<MediaManga>?>
 
     }
 }
