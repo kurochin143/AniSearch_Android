@@ -12,33 +12,34 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
-import com.example.israel.anisearch.ANI_SEARCH_LOG_TAG
 import com.example.israel.anisearch.R
 import com.example.israel.anisearch.jikan_api.JikanResult
 import com.example.israel.anisearch.network.NetworkStatics
-import okhttp3.*
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.Response
 import java.io.IOException
 
-class SearchResultsAdapter : RecyclerView.Adapter<SearchResultsAdapter.ViewHolder>() {
-    private var searchResults: Array<JikanResult> = arrayOf()
+class TopListAdapter : RecyclerView.Adapter<TopListAdapter.ViewHolder>() {
+    private var topList: Array<JikanResult> = arrayOf()
     private var imageCaches: Array<Pair<String?, Bitmap?>?> = arrayOf()
     private var isRequestingImages: Array<Boolean> = arrayOf()
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): ViewHolder {
-        val viewHolder = ViewHolder(LayoutInflater.from(p0.context).inflate(R.layout.item_search_result, p0, false))
+        val viewHolder = ViewHolder(LayoutInflater.from(p0.context).inflate(R.layout.item_top, p0, false))
         return viewHolder
     }
 
     override fun getItemCount(): Int {
-        return searchResults.size
+        return topList.size
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        val searchResult = searchResults[position]
+        val top = topList[position]
 
-        viewHolder.titleTextView.text = searchResult.title?: "no_title"
+        viewHolder.titleTextView.text = top.title?: "no_title"
 
-        if (searchResult.imageUrl != null) {
+        if (top.imageUrl != null) {
             val imageCache = imageCaches[viewHolder.adapterPosition]
             if (imageCache == null) { // image has not been cached yet
 
@@ -55,14 +56,14 @@ class SearchResultsAdapter : RecyclerView.Adapter<SearchResultsAdapter.ViewHolde
                     val positionT = viewHolder.adapterPosition
                     val context = viewHolder.itemView.context
 
-                    NetworkStatics.requestImage(searchResult.imageUrl!!).enqueue(object: Callback{
+                    NetworkStatics.requestImage(top.imageUrl!!).enqueue(object: Callback {
                         override fun onFailure(call: Call, e: IOException) {
                             e.printStackTrace()
                             onRequestImageFinished(uiHandler, positionT, null, call,null)
                         }
 
                         override fun onResponse(call: Call, response: Response) {
-                            onRequestImageFinished(uiHandler, positionT, searchResult.imageUrl, call, response)
+                            onRequestImageFinished(uiHandler, positionT, top.imageUrl, call, response)
                         }
                     })
                 }
@@ -104,16 +105,16 @@ class SearchResultsAdapter : RecyclerView.Adapter<SearchResultsAdapter.ViewHolde
         }
     }
 
-    fun setSearchResults(searchResults: Array<JikanResult>) {
-        this.searchResults = searchResults
-        imageCaches = Array(searchResults.size) {null}
-        isRequestingImages = Array(searchResults.size) {false}
+    fun setTopList(topList: Array<JikanResult>) {
+        this.topList = topList
+        imageCaches = Array(topList.size) {null}
+        isRequestingImages = Array(topList.size) { false}
         notifyDataSetChanged()
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val titleTextView: TextView = itemView.findViewById(R.id.item_search_result_text_title)
-        val imageImageView: ImageView = itemView.findViewById(R.id.item_search_result_image_image)
-        val requestingImageProgressBar: ProgressBar = itemView.findViewById(R.id.item_search_result_progress_bar_requesting_image)
+        val titleTextView: TextView = itemView.findViewById(R.id.item_top_text_title)
+        val imageImageView: ImageView = itemView.findViewById(R.id.item_top_image_image)
+        val requestingImageProgressBar: ProgressBar = itemView.findViewById(R.id.item_top_progress_bar_requesting_image)
     }
 }

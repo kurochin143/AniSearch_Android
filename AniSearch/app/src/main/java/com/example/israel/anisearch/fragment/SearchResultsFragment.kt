@@ -11,10 +11,7 @@ import android.view.ViewGroup
 import android.widget.ProgressBar
 import com.example.israel.anisearch.R
 import com.example.israel.anisearch.adapter.SearchResultsAdapter
-import com.example.israel.anisearch.jikan_api.JikanApiDao
-import com.example.israel.anisearch.jikan_api.Media
-import com.example.israel.anisearch.jikan_api.MediaAnime
-import com.example.israel.anisearch.jikan_api.SearchResult
+import com.example.israel.anisearch.jikan_api.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -36,7 +33,7 @@ class SearchResultsFragment : Fragment() {
     private var query: String = ""
     private var page: Int = 0
     private var fragmentView: View? = null
-    private var animeSearchCall: Call<SearchResult<MediaAnime>?>? = null
+    private var animeSearchCall: Call<JikanResultList<JikanResult>?>? = null
     private var requestingProgressBar: ProgressBar? = null
     private var searchResultsAdapter: SearchResultsAdapter? = null
 
@@ -91,26 +88,26 @@ class SearchResultsFragment : Fragment() {
 
         animeSearchCall = JikanApiDao.searchAnime(
             query, page, null, null,
-            null, null, null,
+            "r", null, null,
             null, null
         )
 
-        animeSearchCall!!.enqueue(object: Callback<SearchResult<MediaAnime>?>{
-            override fun onFailure(call: Call<SearchResult<MediaAnime>?>, t: Throwable) {
+        animeSearchCall!!.enqueue(object: Callback<JikanResultList<JikanResult>?>{
+            override fun onFailure(call: Call<JikanResultList<JikanResult>?>, t: Throwable) {
+                t.printStackTrace()
                 onAnimeSearchCallFinished(null)
             }
 
             override fun onResponse(
-                call: Call<SearchResult<MediaAnime>?>,
-                response: Response<SearchResult<MediaAnime>?>
+                call: Call<JikanResultList<JikanResult>?>,
+                response: Response<JikanResultList<JikanResult>?>
             ) {
                 onAnimeSearchCallFinished(response)
             }
-
         })
     }
 
-    fun onAnimeSearchCallFinished(response: Response<SearchResult<MediaAnime>?>?) {
+    fun onAnimeSearchCallFinished(response: Response<JikanResultList<JikanResult>?>?) {
         requestingProgressBar!!.visibility = View.INVISIBLE
 
         if (animeSearchCall!!.isCanceled) {
@@ -120,10 +117,15 @@ class SearchResultsFragment : Fragment() {
         animeSearchCall = null
 
         if (response != null && response.isSuccessful && response.body() != null) {
+            if (response.body()!!.results != null) {
+                @Suppress("UNCHECKED_CAST")
+                searchResultsAdapter!!.setSearchResults(response.body()!!.results!!)
 
-            val tn = Thread.currentThread().name
-            searchResultsAdapter!!.setSearchResults(response.body()!!.results as Array<Media>)
-
+            } else {
+                assert(false)
+            }
+        } else {
+            assert(false)
         }
     }
 

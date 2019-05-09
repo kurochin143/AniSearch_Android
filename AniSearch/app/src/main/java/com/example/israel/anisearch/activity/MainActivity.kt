@@ -4,6 +4,7 @@ import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import com.example.israel.anisearch.R
+import java.lang.StringBuilder
 
 class MainActivity : AppCompatActivity() {
 
