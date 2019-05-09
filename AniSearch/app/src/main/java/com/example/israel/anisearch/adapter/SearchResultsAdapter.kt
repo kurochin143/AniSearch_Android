@@ -17,6 +17,7 @@ import com.example.israel.anisearch.R
 import com.example.israel.anisearch.jikan_api.JikanResult
 import com.example.israel.anisearch.network.NetworkStatics
 import okhttp3.*
+import java.io.BufferedInputStream
 import java.io.IOException
 
 class SearchResultsAdapter : RecyclerView.Adapter<SearchResultsAdapter.ViewHolder>() {
@@ -84,23 +85,32 @@ class SearchResultsAdapter : RecyclerView.Adapter<SearchResultsAdapter.ViewHolde
         }
 
         if (response != null && response.isSuccessful && response.body() != null) {
-            val bytes = response.body()!!.bytes() ?: return
+            val bufferedInputStream = BufferedInputStream(response.body()!!.byteStream())
+            val image = BitmapFactory.decodeStream(bufferedInputStream)
+            bufferedInputStream.close()
+
             // do not cache if there is no image
-            val image = BitmapFactory.decodeByteArray(bytes, 0, bytes.size) ?: return
+            if (image != null) {
+                uiHandler.post {
+                    isRequestingImages[position] = false
 
-            uiHandler.post {
-                isRequestingImages[position] = false
+                    imageCaches[position] = Pair(url, image)
 
-                imageCaches[position] = Pair(url, image)
+                    // TODO what I really wanna do is directly set the image of the view holder if it exists. There's no way to get it
 
-                // TODO this will also reset the animation, all we want is to update the image if the view is visible. Hint: LayoutManager
-                notifyItemChanged(position)
+                    notifyItemChanged(position)
+                }
+
+                return // successful
             }
-        } else {
-            uiHandler.post {
-                isRequestingImages[position] = false
-                notifyItemChanged(position)
-            }
+        }
+
+        // failed
+        uiHandler.post {
+            isRequestingImages[position] = false
+
+            // @NOTE: this will request a download again
+            notifyItemChanged(position)
         }
     }
 
