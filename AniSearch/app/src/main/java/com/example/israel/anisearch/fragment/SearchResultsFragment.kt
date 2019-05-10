@@ -3,7 +3,7 @@ package com.example.israel.anisearch.fragment
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -16,34 +16,29 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-const val ARG_QUERY = "param1"
-private const val ARG_PAGE = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [SearchResultsFragment.newInstance] factory method to
- * create an instance of this fragment.
- *
- */
 class SearchResultsFragment : Fragment() {
 
     private var query: String = ""
     private var page: Int = 0
+    private var options: HashMap<String, String> = HashMap()
     private var fragmentView: View? = null
-    private var animeSearchCall: Call<JikanResultList<JikanResult>?>? = null
+    private var animeSearchCall: Call<JikanList<JikanMediaAnime>?>? = null
     private var requestingProgressBar: ProgressBar? = null
     private var searchResultsAdapter: SearchResultsAdapter? = null
 
     companion object {
+        private const val SPAN_COUNT = 3
+        private const val ARG_QUERY = "query"
+        private const val ARG_PAGE = "page"
+        private const val ARG_OPTIONS = "options"
+
         @JvmStatic
-        fun newInstance(query: String, page: Int) =
+        fun newInstance(query: String, page: Int, options: HashMap<String, String>) =
             SearchResultsFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_QUERY, query)
                     putInt(ARG_PAGE, page)
+                    putSerializable(ARG_OPTIONS, options)
                 }
             }
     }
@@ -53,6 +48,7 @@ class SearchResultsFragment : Fragment() {
         arguments?.let {
             query = it.getString(ARG_QUERY)!!
             page = it.getInt(ARG_PAGE)
+            options = it.getSerializable(ARG_OPTIONS) as HashMap<String, String>
         }
     }
 
@@ -69,7 +65,7 @@ class SearchResultsFragment : Fragment() {
         // recycler view
         val recyclerView = fragmentView!!.findViewById<RecyclerView>(R.id.fragment_search_results_recycler)
         recyclerView.setHasFixedSize(true)
-        recyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        recyclerView.layoutManager = GridLayoutManager(context, SPAN_COUNT)
         searchResultsAdapter = SearchResultsAdapter()
         recyclerView.adapter = searchResultsAdapter
 
@@ -84,30 +80,30 @@ class SearchResultsFragment : Fragment() {
         }
 
         requestingProgressBar!!.visibility = View.VISIBLE
-        searchResultsAdapter!!.setSearchResults(arrayOf())
+        searchResultsAdapter!!.setSearchResults(ArrayList())
 
         animeSearchCall = JikanApiDao.searchAnime(
             query, page, null, null,
-            "r", null, null,
+            null, null, null,
             null, null
         )
 
-        animeSearchCall!!.enqueue(object: Callback<JikanResultList<JikanResult>?>{
-            override fun onFailure(call: Call<JikanResultList<JikanResult>?>, t: Throwable) {
+        animeSearchCall!!.enqueue(object: Callback<JikanList<JikanMediaAnime>?>{
+            override fun onFailure(call: Call<JikanList<JikanMediaAnime>?>, t: Throwable) {
                 t.printStackTrace()
                 onAnimeSearchCallFinished(null)
             }
 
             override fun onResponse(
-                call: Call<JikanResultList<JikanResult>?>,
-                response: Response<JikanResultList<JikanResult>?>
+                call: Call<JikanList<JikanMediaAnime>?>,
+                response: Response<JikanList<JikanMediaAnime>?>
             ) {
                 onAnimeSearchCallFinished(response)
             }
         })
     }
 
-    fun onAnimeSearchCallFinished(response: Response<JikanResultList<JikanResult>?>?) {
+    fun onAnimeSearchCallFinished(response: Response<JikanList<JikanMediaAnime>?>?) {
         requestingProgressBar!!.visibility = View.INVISIBLE
 
         if (animeSearchCall!!.isCanceled) {
@@ -116,16 +112,32 @@ class SearchResultsFragment : Fragment() {
         }
         animeSearchCall = null
 
-        if (response != null && response.isSuccessful && response.body() != null) {
-            if (response.body()!!.results != null) {
-                @Suppress("UNCHECKED_CAST")
-                searchResultsAdapter!!.setSearchResults(response.body()!!.results!!)
+        if (response != null && response.isSuccessful && response.body() != null && response.body()!!.list != null) {
+            val animeList = response.body()!!.list!!
+            // filter
+            val filteredAnimeList: ArrayList<Jikan> = ArrayList(animeList.size)
 
-            } else {
-                assert(false)
+            // filter by rated
+            val ratedListStr = options["ratedList"]!!
+            val ratedList = ratedListStr.split(',')
+            val isValidRated = fun(anime:JikanMediaAnime): Boolean {
+                ratedList.forEach {
+                    if (anime.rated == it) return true
+                }
+                return false
             }
-        } else {
-            assert(false)
+
+            val notValid = ArrayList<Jikan>()
+            animeList.forEach {
+                if (isValidRated(it)) {
+                    filteredAnimeList.add(it)
+                } else {
+                    notValid.add(it)
+                }
+            }
+            filteredAnimeList.trimToSize()
+
+            searchResultsAdapter!!.setSearchResults(filteredAnimeList)
         }
     }
 

@@ -7,6 +7,7 @@ import android.widget.Button
 import android.widget.EditText
 import com.example.israel.anisearch.R
 import com.example.israel.anisearch.fragment.SearchResultsFragment
+import com.example.israel.anisearch.jikan_api.JikanMedia
 
 class SearchActivity : AppCompatActivity() {
 
@@ -18,7 +19,11 @@ class SearchActivity : AppCompatActivity() {
 
         val searchButton = findViewById<Button>(R.id.activity_search_button_search)
         searchButton.setOnClickListener {
-            val searchResultsFragment = SearchResultsFragment.newInstance(queryEditText.text.toString(), 1)
+            val options = HashMap<String, String>()
+            val ratedList = JikanMedia.RATED_ALL_STR
+            options["ratedList"] = ratedList
+
+            val searchResultsFragment = SearchResultsFragment.newInstance(queryEditText.text.toString(), 1, options)
             this@SearchActivity.supportFragmentManager.beginTransaction()
                 .add(R.id.activity_search_root, searchResultsFragment)
                 .addToBackStack(null)

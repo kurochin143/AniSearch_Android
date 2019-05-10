@@ -18,15 +18,19 @@
             android:src="@drawable/ic_search_24dp"/>
 
     <TextView
-            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="Top "
             android:textSize="18sp"
+            android:textColor="@color/colorTextDark"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent" android:id="@+id/textView"/>
+            app:layout_constraintStart_toStartOf="parent"
+            android:id="@+id/textView"/>
 
     <Spinner
             android:id="@+id/activity_home_spinner_top_types"
-            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             app:layout_constraintStart_toEndOf="@+id/textView"
             app:layout_constraintTop_toTopOf="parent">
     </Spinner>
@@ -45,12 +49,16 @@
             android:id="@+id/activity_home_constraint_requesting_top"
             android:visibility="gone"
             android:background="#55000000"
-            android:layout_width="match_parent" android:layout_height="match_parent">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
         <ProgressBar
-                android:layout_width="50dp" android:layout_height="50dp"
-                app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent"/>
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"/>
 
     </android.support.constraint.ConstraintLayout>
 

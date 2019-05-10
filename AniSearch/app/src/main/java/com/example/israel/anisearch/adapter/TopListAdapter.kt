@@ -1,11 +1,9 @@
 package com.example.israel.anisearch.adapter
 
-import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Handler
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +11,7 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.example.israel.anisearch.R
-import com.example.israel.anisearch.jikan_api.JikanResult
+import com.example.israel.anisearch.jikan_api.Jikan
 import com.example.israel.anisearch.network.NetworkStatics
 import okhttp3.Call
 import okhttp3.Callback
@@ -22,9 +20,9 @@ import java.io.BufferedInputStream
 import java.io.IOException
 
 class TopListAdapter : RecyclerView.Adapter<TopListAdapter.ViewHolder>() {
-    private var topList: Array<JikanResult> = arrayOf()
-    private var imageCaches: Array<Pair<String?, Bitmap?>?> = arrayOf()
-    private var isRequestingImages: Array<Boolean> = arrayOf()
+    private var topList: ArrayList<Jikan> = ArrayList()
+    private var imageCaches: ArrayList<Pair<String?, Bitmap?>?> = ArrayList()
+    private var isRequestingImages: ArrayList<Boolean> = ArrayList()
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): ViewHolder {
         val viewHolder = ViewHolder(LayoutInflater.from(p0.context).inflate(R.layout.item_top, p0, false))
@@ -38,6 +36,8 @@ class TopListAdapter : RecyclerView.Adapter<TopListAdapter.ViewHolder>() {
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         val top = topList[position]
 
+        val rankStr = "# ${position + 1}"
+        viewHolder.rankTextView.text = rankStr
         viewHolder.titleTextView.text = top.title?: "no_title"
 
         if (top.imageUrl != null) {
@@ -47,7 +47,7 @@ class TopListAdapter : RecyclerView.Adapter<TopListAdapter.ViewHolder>() {
                 viewHolder.imageImageView.setImageBitmap(null)
                 viewHolder.requestingImageProgressBar.visibility = View.VISIBLE
 
-                if (!isRequestingImages[viewHolder.adapterPosition]) { // not already downloading
+                if (!isRequestingImages[viewHolder.adapterPosition]) { // not already requesting
                     // download the image
                     isRequestingImages[viewHolder.adapterPosition] = true
 
@@ -55,7 +55,6 @@ class TopListAdapter : RecyclerView.Adapter<TopListAdapter.ViewHolder>() {
 
                     // preserve value
                     val positionT = viewHolder.adapterPosition
-                    val context = viewHolder.itemView.context
 
                     NetworkStatics.requestImage(top.imageUrl!!).enqueue(object: Callback {
                         override fun onFailure(call: Call, e: IOException) {
@@ -113,14 +112,15 @@ class TopListAdapter : RecyclerView.Adapter<TopListAdapter.ViewHolder>() {
         }
     }
 
-    fun setTopList(topList: Array<JikanResult>) {
+    fun setTopList(topList: ArrayList<Jikan>) {
         this.topList = topList
-        imageCaches = Array(topList.size) {null}
-        isRequestingImages = Array(topList.size) { false}
+        Array<Pair<String?, Bitmap?>?>(topList.size) {null}.toCollection(imageCaches)
+        Array(topList.size) { false}.toCollection(isRequestingImages)
         notifyDataSetChanged()
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val rankTextView: TextView = itemView.findViewById(R.id.item_top_text_rank)
         val titleTextView: TextView = itemView.findViewById(R.id.item_top_text_title)
         val imageImageView: ImageView = itemView.findViewById(R.id.item_top_image_image)
         val requestingImageProgressBar: ProgressBar = itemView.findViewById(R.id.item_top_progress_bar_requesting_image)

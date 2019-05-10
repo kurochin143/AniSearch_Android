@@ -43,23 +43,23 @@ class JikanApiDao {
             type: String?,
             status: String?,
             rated: String?,
-            genre: Int?,
+            genre: String?,
             score: Float?,
             startDate: String?,
             endDate: String?
-        ): Call<JikanResultList<JikanResult>?> {
+        ): Call<JikanList<JikanMediaAnime>?> {
             val queryParams = HashMap<String, String>()
             queryParams["q"] = query
             queryParams["page"] = page.toString()
             if (type != null) queryParams["type"] = type
             if (status != null) queryParams["status"] = status
             if (rated != null) queryParams["rated"] = rated
-            if (genre != null) queryParams["genre"] = genre.toString()
+            if (genre != null) queryParams["genre"] = genre
             if (score != null) queryParams["score"] = score.toString()
             if (startDate != null) queryParams["start_date"] = startDate
             if (endDate != null) queryParams["end_date"] = endDate
 
-            return apiService.search("anime", queryParams)
+            return apiService.searchAnime(queryParams)
         }
 
         fun searchManga(
@@ -68,25 +68,24 @@ class JikanApiDao {
             type: String?,
             status: String?,
             rated: String?,
-            genre: Int?,
+            genre: String?,
             score: Float?,
             startDate: String?,
             endDate: String?
-        ): Call<JikanResultList<JikanResult>?> {
+        ): Call<JikanList<Jikan>?> {
             val queryParams = HashMap<String, String>()
             queryParams["q"] = query
             queryParams["page"] = page.toString()
             if (type != null) queryParams["type"] = type
             if (status != null) queryParams["status"] = status
             if (rated != null) queryParams["rated"] = rated
-            if (genre != null) queryParams["genre"] = genre.toString()
+            if (genre != null) queryParams["genre"] = genre
             if (score != null) queryParams["score"] = score.toString()
             if (startDate != null) queryParams["start_date"] = startDate
             if (endDate != null) queryParams["end_date"] = endDate
 
             return apiService.search("manga", queryParams)
         }
-
     }
 
     interface JikanApiInterface {
@@ -100,16 +99,19 @@ class JikanApiDao {
          * Both: bypopularity favorite
          * */
         @GET("$TOP{type}/{page}/{subtype}/")
-        fun getTop(@Path(value = "type") type: String, @Path(value = "page") page: Int, @Path(value = "subtype") subtype: String): Call<JikanResultList<JikanResult>?>
+        fun getTop(@Path(value = "type") type: String, @Path(value = "page") page: Int, @Path(value = "subtype") subtype: String): Call<JikanList<Jikan>?>
 
         /**
          * @param type anime, manga, characters, people
          * */
         @GET("$TOP{type}/{page}/")
-        fun getTop(@Path(value = "type") type: String, @Path(value = "page") page: Int): Call<JikanResultList<JikanResult>?>
+        fun getTop(@Path(value = "type") type: String, @Path(value = "page") page: Int): Call<JikanList<Jikan>?>
 
         @GET("$SEARCH{type}/")
-        fun search(@Path(value = "type") type: String, @QueryMap queryParams: HashMap<String, String>): Call<JikanResultList<JikanResult>?>
+        fun search(@Path(value = "type") type: String, @QueryMap queryParams: HashMap<String, String>): Call<JikanList<Jikan>?>
+
+        @GET(SEARCH+ANIME)
+        fun searchAnime(@QueryMap queryParams: HashMap<String, String>): Call<JikanList<JikanMediaAnime>?>
 
     }
 }

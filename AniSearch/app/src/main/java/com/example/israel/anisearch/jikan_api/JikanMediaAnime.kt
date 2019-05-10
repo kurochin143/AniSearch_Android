@@ -3,7 +3,7 @@ package com.example.israel.anisearch.jikan_api
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-class MediaAnime : Media() {
+class JikanMediaAnime : JikanMedia() {
 
     @SerializedName("episodes")
     @Expose

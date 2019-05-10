@@ -3,7 +3,8 @@ package com.example.israel.anisearch.jikan_api
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-open class JikanResult() {
+/** Jikan common data*/
+open class Jikan() {
 
     constructor(id: Long?, title: String?, imageUrl: String?) : this() {
         _id = id

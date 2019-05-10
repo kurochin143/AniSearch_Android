@@ -5,29 +5,31 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
 import android.support.design.widget.FloatingActionButton
-import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Button
 import android.widget.Spinner
 import com.example.israel.anisearch.R
 import com.example.israel.anisearch.adapter.TopListAdapter
 import com.example.israel.anisearch.jikan_api.JikanApiDao
-import com.example.israel.anisearch.jikan_api.JikanResult
-import com.example.israel.anisearch.jikan_api.JikanResultList
+import com.example.israel.anisearch.jikan_api.Jikan
+import com.example.israel.anisearch.jikan_api.JikanList
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class HomeActivity : AppCompatActivity() {
 
+    companion object {
+        private const val SPAN_COUNT = 4
+    }
+
     private var requestingTopConstraintLayout: ConstraintLayout? = null
     private var topTypesSpinner: Spinner? = null
     private var topListAdapter: TopListAdapter? = null
-    private var getTopCall: Call<JikanResultList<JikanResult>?>? = null
+    private var getTopCall: Call<JikanList<Jikan>?>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,7 +64,7 @@ class HomeActivity : AppCompatActivity() {
         val topListRecyclerView = findViewById<RecyclerView>(R.id.recycler_top_list)
         topListRecyclerView.setHasFixedSize(true)
 
-        topListRecyclerView.layoutManager = GridLayoutManager(this, 3)
+        topListRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
         topListAdapter = TopListAdapter()
         topListRecyclerView.adapter = topListAdapter
@@ -77,17 +79,17 @@ class HomeActivity : AppCompatActivity() {
         }
 
         requestingTopConstraintLayout!!.visibility = View.VISIBLE
-        topListAdapter!!.setTopList(arrayOf())
+        topListAdapter!!.setTopList(ArrayList())
 
         getTopCall = JikanApiDao.apiService.getTop((topTypesSpinner!!.selectedItem as String).toLowerCase(), 1)
-        getTopCall!!.enqueue(object: Callback<JikanResultList<JikanResult>?> {
-            override fun onFailure(call: Call<JikanResultList<JikanResult>?>, t: Throwable) {
+        getTopCall!!.enqueue(object: Callback<JikanList<Jikan>?> {
+            override fun onFailure(call: Call<JikanList<Jikan>?>, t: Throwable) {
                 onGetTopCallFinished(null)
             }
 
             override fun onResponse(
-                call: Call<JikanResultList<JikanResult>?>,
-                response: Response<JikanResultList<JikanResult>?>
+                call: Call<JikanList<Jikan>?>,
+                response: Response<JikanList<Jikan>?>
             ) {
                 onGetTopCallFinished(response)
             }
@@ -95,7 +97,7 @@ class HomeActivity : AppCompatActivity() {
         })
     }
 
-    private fun onGetTopCallFinished(response: Response<JikanResultList<JikanResult>?>?) {
+    private fun onGetTopCallFinished(response: Response<JikanList<Jikan>?>?) {
         requestingTopConstraintLayout!!.visibility = View.GONE
 
         if (getTopCall!!.isCanceled) {
@@ -104,16 +106,8 @@ class HomeActivity : AppCompatActivity() {
 
         getTopCall = null
 
-        if (response != null && response.isSuccessful && response.body() != null) {
-            if (response.body()!!.results != null) {
-                @Suppress("UNCHECKED_CAST")
-                topListAdapter!!.setTopList(response.body()!!.results!!)
-
-            } else {
-                assert(false)
-            }
-        } else {
-            assert(false)
+        if (response != null && response.isSuccessful && response.body() != null && response.body()!!.list != null) {
+            topListAdapter!!.setTopList(response.body()!!.list!!)
         }
 
     }

@@ -1,29 +1,26 @@
 package com.example.israel.anisearch.adapter
 
-import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Handler
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
-import com.example.israel.anisearch.ANI_SEARCH_LOG_TAG
 import com.example.israel.anisearch.R
-import com.example.israel.anisearch.jikan_api.JikanResult
+import com.example.israel.anisearch.jikan_api.Jikan
 import com.example.israel.anisearch.network.NetworkStatics
 import okhttp3.*
 import java.io.BufferedInputStream
 import java.io.IOException
 
 class SearchResultsAdapter : RecyclerView.Adapter<SearchResultsAdapter.ViewHolder>() {
-    private var searchResults: Array<JikanResult> = arrayOf()
-    private var imageCaches: Array<Pair<String?, Bitmap?>?> = arrayOf()
-    private var isRequestingImages: Array<Boolean> = arrayOf()
+    private var searchResults: ArrayList<Jikan> = ArrayList()
+    private var imageCaches: ArrayList<Pair<String?, Bitmap?>?> = ArrayList()
+    private var isRequestingImages: ArrayList<Boolean> = ArrayList()
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): ViewHolder {
         val viewHolder = ViewHolder(LayoutInflater.from(p0.context).inflate(R.layout.item_search_result, p0, false))
@@ -46,7 +43,7 @@ class SearchResultsAdapter : RecyclerView.Adapter<SearchResultsAdapter.ViewHolde
                 viewHolder.imageImageView.setImageBitmap(null)
                 viewHolder.requestingImageProgressBar.visibility = View.VISIBLE
 
-                if (!isRequestingImages[viewHolder.adapterPosition]) { // not already downloading
+                if (!isRequestingImages[viewHolder.adapterPosition]) { // not already requesting
                     // download the image
                     isRequestingImages[viewHolder.adapterPosition] = true
 
@@ -54,7 +51,6 @@ class SearchResultsAdapter : RecyclerView.Adapter<SearchResultsAdapter.ViewHolde
 
                     // preserve value
                     val positionT = viewHolder.adapterPosition
-                    val context = viewHolder.itemView.context
 
                     NetworkStatics.requestImage(searchResult.imageUrl!!).enqueue(object: Callback{
                         override fun onFailure(call: Call, e: IOException) {
@@ -114,10 +110,10 @@ class SearchResultsAdapter : RecyclerView.Adapter<SearchResultsAdapter.ViewHolde
         }
     }
 
-    fun setSearchResults(searchResults: Array<JikanResult>) {
+    fun setSearchResults(searchResults: ArrayList<Jikan>) {
         this.searchResults = searchResults
-        imageCaches = Array(searchResults.size) {null}
-        isRequestingImages = Array(searchResults.size) {false}
+        Array<Pair<String?, Bitmap?>?>(searchResults.size) {null}.toCollection(imageCaches)
+        Array(searchResults.size) {false}.toCollection(isRequestingImages)
         notifyDataSetChanged()
     }
 

@@ -27,8 +27,8 @@ class JikanApiDaoTest {
 //                assert(response.isSuccessful)
 //                val searchMedia = response.body()
 //                assert(searchMedia != null)
-//                assertNotEquals(0, searchMedia!!.results!!.size == 0)
-//                assertEquals("Grand Blue", searchMedia!!.results!![0].title)
+//                assertNotEquals(0, searchMedia!!.list!!.size == 0)
+//                assertEquals("Grand Blue", searchMedia!!.list!![0].title)
 //
 //                synchronized(waiter) {
 //                    waiter.notify()
@@ -61,8 +61,8 @@ class JikanApiDaoTest {
 //                assert(response.isSuccessful)
 //                val searchMedia = response.body()
 //                assert(searchMedia != null)
-//                assertNotEquals(0, searchMedia!!.results!!.size == 0)
-//                assertEquals("Grand Blue", searchMedia!!.results!![0].title)
+//                assertNotEquals(0, searchMedia!!.list!!.size == 0)
+//                assertEquals("Grand Blue", searchMedia!!.list!![0].title)
 //
 //                synchronized(waiter) {
 //                    waiter.notify()
