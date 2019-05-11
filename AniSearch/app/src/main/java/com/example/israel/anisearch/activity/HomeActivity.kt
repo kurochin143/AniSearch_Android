@@ -16,17 +16,11 @@ import com.example.israel.anisearch.adapter.TopListAdapter
 import com.example.israel.anisearch.anilist_api.AniListApiDao
 import com.example.israel.anisearch.anilist_api.AniListType
 import com.example.israel.anisearch.anilist_api.TopAnimeResult
-import com.example.israel.anisearch.jikan_api.Jikan
-import com.example.israel.anisearch.jikan_api.JikanList
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class HomeActivity : AppCompatActivity() {
-
-    companion object {
-        private const val SPAN_COUNT = 4
-    }
 
     private var requestingTopConstraintLayout: ConstraintLayout? = null
     private var topTypesSpinner: Spinner? = null
