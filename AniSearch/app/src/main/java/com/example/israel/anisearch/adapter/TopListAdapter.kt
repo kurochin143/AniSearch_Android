@@ -11,6 +11,9 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.example.israel.anisearch.R
+import com.example.israel.anisearch.anilist_api.AniListType
+import com.example.israel.anisearch.anilist_api.Anime
+import com.example.israel.anisearch.anilist_api.Manga
 import com.example.israel.anisearch.jikan_api.Jikan
 import com.example.israel.anisearch.network.NetworkStatics
 import okhttp3.Call
@@ -20,7 +23,8 @@ import java.io.BufferedInputStream
 import java.io.IOException
 
 class TopListAdapter : RecyclerView.Adapter<TopListAdapter.ViewHolder>() {
-    private var topList: ArrayList<Jikan> = ArrayList()
+    private var type = AniListType.ANIME
+    private var topList: ArrayList<Any> = ArrayList()
     private var imageCaches: ArrayList<Pair<String?, Bitmap?>?> = ArrayList()
     private var isRequestingImages: ArrayList<Boolean> = ArrayList()
 
@@ -38,9 +42,22 @@ class TopListAdapter : RecyclerView.Adapter<TopListAdapter.ViewHolder>() {
 
         val rankStr = "# ${position + 1}"
         viewHolder.rankTextView.text = rankStr
-        viewHolder.titleTextView.text = top.title?: "no_title"
 
-        if (top.imageUrl != null) {
+        var imageUrl: String? = null
+        when (type) {
+            AniListType.ANIME -> {
+                top as Anime
+                viewHolder.titleTextView.text = top.title?.romaji?: "no_title"
+                imageUrl = top.coverImage?.large
+            }
+            AniListType.MANGA -> {
+                top as Manga
+                viewHolder.titleTextView.text = top.title?.romaji?: "no_title"
+                imageUrl = top.coverImage?.large
+            }
+        }
+
+        if (imageUrl != null) {
             val imageCache = imageCaches[viewHolder.adapterPosition]
             if (imageCache == null) { // image has not been cached yet
 
@@ -56,14 +73,14 @@ class TopListAdapter : RecyclerView.Adapter<TopListAdapter.ViewHolder>() {
                     // preserve value
                     val positionT = viewHolder.adapterPosition
 
-                    NetworkStatics.requestImage(top.imageUrl!!).enqueue(object: Callback {
+                    NetworkStatics.requestImage(imageUrl).enqueue(object: Callback {
                         override fun onFailure(call: Call, e: IOException) {
                             e.printStackTrace()
                             onRequestImageFinished(uiHandler, positionT, null, call,null)
                         }
 
                         override fun onResponse(call: Call, response: Response) {
-                            onRequestImageFinished(uiHandler, positionT, top.imageUrl, call, response)
+                            onRequestImageFinished(uiHandler, positionT, imageUrl, call, response)
                         }
                     })
                 }
@@ -112,7 +129,8 @@ class TopListAdapter : RecyclerView.Adapter<TopListAdapter.ViewHolder>() {
         }
     }
 
-    fun setTopList(topList: ArrayList<Jikan>) {
+    fun setTopList(type: String, topList: ArrayList<Any>) {
+        this.type = type
         this.topList = topList
         Array<Pair<String?, Bitmap?>?>(topList.size) {null}.toCollection(imageCaches)
         Array(topList.size) { false}.toCollection(isRequestingImages)
@@ -125,4 +143,6 @@ class TopListAdapter : RecyclerView.Adapter<TopListAdapter.ViewHolder>() {
         val imageImageView: ImageView = itemView.findViewById(R.id.item_top_image_image)
         val requestingImageProgressBar: ProgressBar = itemView.findViewById(R.id.item_top_progress_bar_requesting_image)
     }
+
+    // create view holder for each type
 }

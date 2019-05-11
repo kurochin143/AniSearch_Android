@@ -6,8 +6,8 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.util.concurrent.TimeUnit
 
-private const val IMAGE_REQUEST_CALL_TIMEOUT = 3000L
-private const val IMAGE_REQUEST_READ_TIMEOUT = 3000L
+private const val IMAGE_REQUEST_CALL_TIMEOUT = 10000L
+private const val IMAGE_REQUEST_READ_TIMEOUT = 10000L
 
 class NetworkStatics {
     companion object {

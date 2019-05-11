@@ -13,7 +13,9 @@ import android.widget.ArrayAdapter
 import android.widget.Spinner
 import com.example.israel.anisearch.R
 import com.example.israel.anisearch.adapter.TopListAdapter
-import com.example.israel.anisearch.jikan_api.JikanApiDao
+import com.example.israel.anisearch.anilist_api.AniListApiDao
+import com.example.israel.anisearch.anilist_api.AniListType
+import com.example.israel.anisearch.anilist_api.TopAnimeResult
 import com.example.israel.anisearch.jikan_api.Jikan
 import com.example.israel.anisearch.jikan_api.JikanList
 import retrofit2.Call
@@ -29,7 +31,7 @@ class HomeActivity : AppCompatActivity() {
     private var requestingTopConstraintLayout: ConstraintLayout? = null
     private var topTypesSpinner: Spinner? = null
     private var topListAdapter: TopListAdapter? = null
-    private var getTopCall: Call<JikanList<Jikan>?>? = null
+    private var getTopCall: Call<TopAnimeResult?>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,9 +44,21 @@ class HomeActivity : AppCompatActivity() {
             }
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                requestTop()
-            }
+                when (position) {
+                    0 -> { // anime
+                        requestTopAnime()
+                    }
+                    1 -> { // manga
 
+                    }
+                    2 -> { // character
+
+                    }
+                    3 -> { // staff
+
+                    }
+                }
+            }
         }
 
         ArrayAdapter.createFromResource(this, R.array.top_types, android.R.layout.simple_spinner_item).also {
@@ -61,7 +75,7 @@ class HomeActivity : AppCompatActivity() {
         }
 
         // setup recycler view
-        val topListRecyclerView = findViewById<RecyclerView>(R.id.recycler_top_list)
+        val topListRecyclerView = findViewById<RecyclerView>(R.id.top_list_recycler)
         topListRecyclerView.setHasFixedSize(true)
 
         topListRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
@@ -69,27 +83,27 @@ class HomeActivity : AppCompatActivity() {
         topListAdapter = TopListAdapter()
         topListRecyclerView.adapter = topListAdapter
 
-        requestTop()
+        requestTopAnime()
 
     }
 
-    private fun requestTop() {
+    private fun requestTopAnime() {
         if (getTopCall != null) {
             return
         }
 
         requestingTopConstraintLayout!!.visibility = View.VISIBLE
-        topListAdapter!!.setTopList(ArrayList())
+        topListAdapter!!.setTopList(AniListType.ANIME, ArrayList())
 
-        getTopCall = JikanApiDao.apiService.getTop((topTypesSpinner!!.selectedItem as String).toLowerCase(), 1)
-        getTopCall!!.enqueue(object: Callback<JikanList<Jikan>?> {
-            override fun onFailure(call: Call<JikanList<Jikan>?>, t: Throwable) {
+        getTopCall = AniListApiDao.getTopAnime( 1, 50)
+        getTopCall!!.enqueue(object: Callback<TopAnimeResult?> {
+            override fun onFailure(call: Call<TopAnimeResult?>, t: Throwable) {
                 onGetTopCallFinished(null)
             }
 
             override fun onResponse(
-                call: Call<JikanList<Jikan>?>,
-                response: Response<JikanList<Jikan>?>
+                call: Call<TopAnimeResult?>,
+                response: Response<TopAnimeResult?>
             ) {
                 onGetTopCallFinished(response)
             }
@@ -97,7 +111,7 @@ class HomeActivity : AppCompatActivity() {
         })
     }
 
-    private fun onGetTopCallFinished(response: Response<JikanList<Jikan>?>?) {
+    private fun onGetTopCallFinished(response: Response<TopAnimeResult?>?) {
         requestingTopConstraintLayout!!.visibility = View.GONE
 
         if (getTopCall!!.isCanceled) {
@@ -106,8 +120,13 @@ class HomeActivity : AppCompatActivity() {
 
         getTopCall = null
 
-        if (response != null && response.isSuccessful && response.body() != null && response.body()!!.list != null) {
-            topListAdapter!!.setTopList(response.body()!!.list!!)
+        if (response != null && response.isSuccessful &&
+            response.body() != null &&
+            response.body()!!.data != null &&
+            response.body()!!.data!!.page != null &&
+            response.body()!!.data!!.page!!.media != null) {
+            val topAnimeList = response.body()!!.data!!.page!!.media
+            topListAdapter!!.setTopList(AniListType.ANIME, topAnimeList as ArrayList<Any>)
         }
 
     }

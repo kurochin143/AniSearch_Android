@@ -11,6 +11,9 @@ import android.view.ViewGroup
 import android.widget.ProgressBar
 import com.example.israel.anisearch.R
 import com.example.israel.anisearch.adapter.SearchResultsAdapter
+import com.example.israel.anisearch.anilist_api.AniListApiDao
+import com.example.israel.anisearch.anilist_api.AniListType
+import com.example.israel.anisearch.anilist_api.AnimeSearchResult
 import com.example.israel.anisearch.jikan_api.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -22,7 +25,7 @@ class SearchResultsFragment : Fragment() {
     private var page: Int = 0
     private var options: HashMap<String, String> = HashMap()
     private var fragmentView: View? = null
-    private var animeSearchCall: Call<JikanList<JikanMediaAnime>?>? = null
+    private var animeSearchCall: Call<AnimeSearchResult?>? = null
     private var requestingProgressBar: ProgressBar? = null
     private var searchResultsAdapter: SearchResultsAdapter? = null
 
@@ -31,6 +34,8 @@ class SearchResultsFragment : Fragment() {
         private const val ARG_QUERY = "query"
         private const val ARG_PAGE = "page"
         private const val ARG_OPTIONS = "options"
+        const val OPTIONS_KEY_RATED_LIST_STR = "rated_list_str"
+        const val OPTION_LIST_DELIMITER = ','
 
         @JvmStatic
         fun newInstance(query: String, page: Int, options: HashMap<String, String>) =
@@ -80,30 +85,26 @@ class SearchResultsFragment : Fragment() {
         }
 
         requestingProgressBar!!.visibility = View.VISIBLE
-        searchResultsAdapter!!.setSearchResults(ArrayList())
+        searchResultsAdapter!!.setSearchResults(AniListType.ANIME, ArrayList())
 
-        animeSearchCall = JikanApiDao.searchAnime(
-            query, page, null, null,
-            null, null, null,
-            null, null
-        )
+        animeSearchCall = AniListApiDao.searchAnime(page, 50, query)
 
-        animeSearchCall!!.enqueue(object: Callback<JikanList<JikanMediaAnime>?>{
-            override fun onFailure(call: Call<JikanList<JikanMediaAnime>?>, t: Throwable) {
+        animeSearchCall!!.enqueue(object: Callback<AnimeSearchResult?>{
+            override fun onFailure(call: Call<AnimeSearchResult?>, t: Throwable) {
                 t.printStackTrace()
                 onAnimeSearchCallFinished(null)
             }
 
             override fun onResponse(
-                call: Call<JikanList<JikanMediaAnime>?>,
-                response: Response<JikanList<JikanMediaAnime>?>
+                call: Call<AnimeSearchResult?>,
+                response: Response<AnimeSearchResult?>
             ) {
                 onAnimeSearchCallFinished(response)
             }
         })
     }
 
-    fun onAnimeSearchCallFinished(response: Response<JikanList<JikanMediaAnime>?>?) {
+    fun onAnimeSearchCallFinished(response: Response<AnimeSearchResult?>?) {
         requestingProgressBar!!.visibility = View.INVISIBLE
 
         if (animeSearchCall!!.isCanceled) {
@@ -112,32 +113,12 @@ class SearchResultsFragment : Fragment() {
         }
         animeSearchCall = null
 
-        if (response != null && response.isSuccessful && response.body() != null && response.body()!!.list != null) {
-            val animeList = response.body()!!.list!!
-            // filter
-            val filteredAnimeList: ArrayList<Jikan> = ArrayList(animeList.size)
-
-            // filter by rated
-            val ratedListStr = options["ratedList"]!!
-            val ratedList = ratedListStr.split(',')
-            val isValidRated = fun(anime:JikanMediaAnime): Boolean {
-                ratedList.forEach {
-                    if (anime.rated == it) return true
-                }
-                return false
-            }
-
-            val notValid = ArrayList<Jikan>()
-            animeList.forEach {
-                if (isValidRated(it)) {
-                    filteredAnimeList.add(it)
-                } else {
-                    notValid.add(it)
-                }
-            }
-            filteredAnimeList.trimToSize()
-
-            searchResultsAdapter!!.setSearchResults(filteredAnimeList)
+        if (response != null && response.isSuccessful &&
+            response.body() != null &&
+            response.body()!!.data != null &&
+            response.body()!!.data!!.page != null && response.body()!!.data!!.page!!.media != null) {
+            val animeList = response.body()!!.data!!.page!!.media
+            searchResultsAdapter!!.setSearchResults(AniListType.ANIME, animeList as ArrayList<Any>)
         }
     }
 

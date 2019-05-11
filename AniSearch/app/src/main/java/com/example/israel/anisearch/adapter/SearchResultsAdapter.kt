@@ -11,14 +11,17 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.example.israel.anisearch.R
-import com.example.israel.anisearch.jikan_api.Jikan
+import com.example.israel.anisearch.anilist_api.AniListType
+import com.example.israel.anisearch.anilist_api.Anime
+import com.example.israel.anisearch.anilist_api.Manga
 import com.example.israel.anisearch.network.NetworkStatics
 import okhttp3.*
 import java.io.BufferedInputStream
 import java.io.IOException
 
 class SearchResultsAdapter : RecyclerView.Adapter<SearchResultsAdapter.ViewHolder>() {
-    private var searchResults: ArrayList<Jikan> = ArrayList()
+    private var type = AniListType.ANIME
+    private var searchResults: ArrayList<Any> = ArrayList()
     private var imageCaches: ArrayList<Pair<String?, Bitmap?>?> = ArrayList()
     private var isRequestingImages: ArrayList<Boolean> = ArrayList()
 
@@ -34,9 +37,21 @@ class SearchResultsAdapter : RecyclerView.Adapter<SearchResultsAdapter.ViewHolde
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         val searchResult = searchResults[position]
 
-        viewHolder.titleTextView.text = searchResult.title?: "no_title"
+        var imageUrl: String? = null
+        when (type) {
+            AniListType.ANIME -> {
+                searchResult as Anime
+                viewHolder.titleTextView.text = searchResult.title?.romaji?: "no_title"
+                imageUrl = searchResult.coverImage?.large
+            }
+            AniListType.MANGA -> {
+                searchResult as Manga
+                viewHolder.titleTextView.text = searchResult.title?.romaji?: "no_title"
+                imageUrl = searchResult.coverImage?.large
+            }
+        }
 
-        if (searchResult.imageUrl != null) {
+        if (imageUrl != null) {
             val imageCache = imageCaches[viewHolder.adapterPosition]
             if (imageCache == null) { // image has not been cached yet
 
@@ -52,14 +67,14 @@ class SearchResultsAdapter : RecyclerView.Adapter<SearchResultsAdapter.ViewHolde
                     // preserve value
                     val positionT = viewHolder.adapterPosition
 
-                    NetworkStatics.requestImage(searchResult.imageUrl!!).enqueue(object: Callback{
+                    NetworkStatics.requestImage(imageUrl).enqueue(object: Callback{
                         override fun onFailure(call: Call, e: IOException) {
                             e.printStackTrace()
                             onRequestImageFinished(uiHandler, positionT, null, call,null)
                         }
 
                         override fun onResponse(call: Call, response: Response) {
-                            onRequestImageFinished(uiHandler, positionT, searchResult.imageUrl, call, response)
+                            onRequestImageFinished(uiHandler, positionT, imageUrl, call, response)
                         }
                     })
                 }
@@ -110,7 +125,8 @@ class SearchResultsAdapter : RecyclerView.Adapter<SearchResultsAdapter.ViewHolde
         }
     }
 
-    fun setSearchResults(searchResults: ArrayList<Jikan>) {
+    fun setSearchResults(type: String, searchResults: ArrayList<Any>) {
+        this.type = type
         this.searchResults = searchResults
         Array<Pair<String?, Bitmap?>?>(searchResults.size) {null}.toCollection(imageCaches)
         Array(searchResults.size) {false}.toCollection(isRequestingImages)
