@@ -29,7 +29,15 @@ class Character {
 
         @SerializedName("native")
         @Expose
-        var native = null
+        var native: String? = null
+
+        fun getFullName(): String {
+            if (first != null) {
+                return first + " " + (last?: "")
+            }
+
+            return last?: ""
+        }
 
         companion object {
             fun createGraphQLObject(): GraphQLObject {

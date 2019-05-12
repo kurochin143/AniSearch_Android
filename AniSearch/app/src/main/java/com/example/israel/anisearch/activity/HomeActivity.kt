@@ -13,10 +13,7 @@ import android.widget.ArrayAdapter
 import android.widget.Spinner
 import com.example.israel.anisearch.R
 import com.example.israel.anisearch.adapter.TopListAdapter
-import com.example.israel.anisearch.anilist_api.AniListApiDao
-import com.example.israel.anisearch.anilist_api.AniListType
-import com.example.israel.anisearch.anilist_api.AnimeSearchResult
-import com.example.israel.anisearch.anilist_api.MangaSearchResult
+import com.example.israel.anisearch.anilist_api.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -28,6 +25,7 @@ class HomeActivity : AppCompatActivity() {
     private var topListAdapter: TopListAdapter? = null
     private var getTopAnimeCall: Call<AnimeSearchResult?>? = null
     private var getTopMangaCall: Call<MangaSearchResult?>? = null
+    private var getTopCharactersCall: Call<CharacterSearchResult?>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,7 +46,7 @@ class HomeActivity : AppCompatActivity() {
                         requestTopManga()
                     }
                     2 -> { // character
-
+                        requestTopCharacters()
                     }
                     3 -> { // staff
 
@@ -170,6 +168,46 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
+    private fun requestTopCharacters() {
+        if (getTopCharactersCall != null) {
+            return
+        }
 
+        requestingTopConstraintLayout!!.visibility = View.VISIBLE
+        topListAdapter!!.setTopList(AniListType.CHARACTER, ArrayList())
+
+        getTopCharactersCall = AniListApiDao.getTopCharacters(1, 50)
+        getTopCharactersCall!!.enqueue(object: Callback<CharacterSearchResult?> {
+            override fun onFailure(call: Call<CharacterSearchResult?>, t: Throwable) {
+                onGetTopCharactersCallFinished(null)
+            }
+
+            override fun onResponse(
+                call: Call<CharacterSearchResult?>,
+                response: Response<CharacterSearchResult?>
+            ) {
+                onGetTopCharactersCallFinished(response)
+            }
+        })
+    }
+
+    private fun onGetTopCharactersCallFinished(response: Response<CharacterSearchResult?>?) {
+        requestingTopConstraintLayout!!.visibility = View.GONE
+
+        if (getTopCharactersCall!!.isCanceled) {
+            return
+        }
+
+        getTopCharactersCall = null
+
+        if (response != null && response.isSuccessful &&
+            response.body() != null &&
+            response.body()!!.data != null &&
+            response.body()!!.data!!.page != null &&
+            response.body()!!.data!!.page!!.characters != null) {
+            val topCharacters = response.body()!!.data!!.page!!.characters
+            topListAdapter!!.setTopList(AniListType.CHARACTER, topCharacters as ArrayList<Any>)
+        }
+    }
 
 }

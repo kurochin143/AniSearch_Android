@@ -13,6 +13,7 @@ import android.widget.TextView
 import com.example.israel.anisearch.R
 import com.example.israel.anisearch.anilist_api.AniListType
 import com.example.israel.anisearch.anilist_api.Anime
+import com.example.israel.anisearch.anilist_api.Character
 import com.example.israel.anisearch.anilist_api.Manga
 import com.example.israel.anisearch.jikan_api.Jikan
 import com.example.israel.anisearch.network.NetworkStatics
@@ -54,6 +55,11 @@ class TopListAdapter : RecyclerView.Adapter<TopListAdapter.ViewHolder>() {
                 top as Manga
                 viewHolder.titleTextView.text = top.title?.romaji?: "no_title"
                 imageUrl = top.coverImage?.large
+            }
+            AniListType.CHARACTER -> {
+                top as Character
+                viewHolder.titleTextView.text = top.name?.getFullName()
+                imageUrl = top.image?.large
             }
         }
 

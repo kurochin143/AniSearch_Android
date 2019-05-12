@@ -13,6 +13,7 @@ import android.widget.TextView
 import com.example.israel.anisearch.R
 import com.example.israel.anisearch.anilist_api.AniListType
 import com.example.israel.anisearch.anilist_api.Anime
+import com.example.israel.anisearch.anilist_api.Character
 import com.example.israel.anisearch.anilist_api.Manga
 import com.example.israel.anisearch.network.NetworkStatics
 import okhttp3.*
