@@ -128,8 +128,12 @@ class SearchResultsAdapter : RecyclerView.Adapter<SearchResultsAdapter.ViewHolde
     fun setSearchResults(type: String, searchResults: ArrayList<Any>) {
         this.type = type
         this.searchResults = searchResults
-        Array<Pair<String?, Bitmap?>?>(searchResults.size) {null}.toCollection(imageCaches)
-        Array(searchResults.size) {false}.toCollection(isRequestingImages)
+        imageCaches = ArrayList(this.searchResults.size)
+        isRequestingImages = ArrayList(this.searchResults.size)
+        repeat(this.searchResults.size) {
+            imageCaches.add(null)
+            isRequestingImages.add(false)
+        }
         notifyDataSetChanged()
     }
 

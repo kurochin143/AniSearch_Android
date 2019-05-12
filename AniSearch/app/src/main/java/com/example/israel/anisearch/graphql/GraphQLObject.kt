@@ -11,10 +11,6 @@ class GraphQLObject {
         this.name = name
     }
 
-    fun getParams() = params
-
-    fun getFields() = fields
-
     fun addParam(key: String, value: String): GraphQLObject {
         params[key] = value
         return this

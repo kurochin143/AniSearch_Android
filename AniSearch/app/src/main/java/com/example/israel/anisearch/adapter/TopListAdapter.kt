@@ -132,8 +132,12 @@ class TopListAdapter : RecyclerView.Adapter<TopListAdapter.ViewHolder>() {
     fun setTopList(type: String, topList: ArrayList<Any>) {
         this.type = type
         this.topList = topList
-        Array<Pair<String?, Bitmap?>?>(topList.size) {null}.toCollection(imageCaches)
-        Array(topList.size) { false}.toCollection(isRequestingImages)
+        imageCaches = ArrayList(topList.size)
+        isRequestingImages = ArrayList(topList.size)
+        repeat(this.topList.size) {
+            imageCaches.add(null)
+            isRequestingImages.add(false)
+        }
         notifyDataSetChanged()
     }
 

@@ -69,6 +69,7 @@ abstract class Media {
     }
 
     companion object {
+        /** object for media search*/
         fun createGraphQLObject(type: String, sort: String, isAdult: Boolean, search: String?): GraphQLObject {
             return GraphQLObject("media").also {
                 it.addParam("type", type)
@@ -83,6 +84,7 @@ abstract class Media {
             }
         }
 
+        /** object for media get by id*/
         fun createGraphQLObject() {
             // TODO
         }

@@ -15,7 +15,8 @@ import com.example.israel.anisearch.R
 import com.example.israel.anisearch.adapter.TopListAdapter
 import com.example.israel.anisearch.anilist_api.AniListApiDao
 import com.example.israel.anisearch.anilist_api.AniListType
-import com.example.israel.anisearch.anilist_api.TopAnimeResult
+import com.example.israel.anisearch.anilist_api.AnimeSearchResult
+import com.example.israel.anisearch.anilist_api.MangaSearchResult
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -25,7 +26,8 @@ class HomeActivity : AppCompatActivity() {
     private var requestingTopConstraintLayout: ConstraintLayout? = null
     private var topTypesSpinner: Spinner? = null
     private var topListAdapter: TopListAdapter? = null
-    private var getTopCall: Call<TopAnimeResult?>? = null
+    private var getTopAnimeCall: Call<AnimeSearchResult?>? = null
+    private var getTopMangaCall: Call<MangaSearchResult?>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,7 +45,7 @@ class HomeActivity : AppCompatActivity() {
                         requestTopAnime()
                     }
                     1 -> { // manga
-
+                        requestTopManga()
                     }
                     2 -> { // character
 
@@ -82,37 +84,37 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun requestTopAnime() {
-        if (getTopCall != null) {
+        if (getTopAnimeCall != null) {
             return
         }
 
         requestingTopConstraintLayout!!.visibility = View.VISIBLE
         topListAdapter!!.setTopList(AniListType.ANIME, ArrayList())
 
-        getTopCall = AniListApiDao.getTopAnime( 1, 50)
-        getTopCall!!.enqueue(object: Callback<TopAnimeResult?> {
-            override fun onFailure(call: Call<TopAnimeResult?>, t: Throwable) {
-                onGetTopCallFinished(null)
+        getTopAnimeCall = AniListApiDao.getTopAnime( 1, 50)
+        getTopAnimeCall!!.enqueue(object: Callback<AnimeSearchResult?> {
+            override fun onFailure(call: Call<AnimeSearchResult?>, t: Throwable) {
+                onGetTopAnimeCallFinished(null)
             }
 
             override fun onResponse(
-                call: Call<TopAnimeResult?>,
-                response: Response<TopAnimeResult?>
+                call: Call<AnimeSearchResult?>,
+                response: Response<AnimeSearchResult?>
             ) {
-                onGetTopCallFinished(response)
+                onGetTopAnimeCallFinished(response)
             }
 
         })
     }
 
-    private fun onGetTopCallFinished(response: Response<TopAnimeResult?>?) {
+    private fun onGetTopAnimeCallFinished(response: Response<AnimeSearchResult?>?) {
         requestingTopConstraintLayout!!.visibility = View.GONE
 
-        if (getTopCall!!.isCanceled) {
+        if (getTopAnimeCall!!.isCanceled) {
             return
         }
 
-        getTopCall = null
+        getTopAnimeCall = null
 
         if (response != null && response.isSuccessful &&
             response.body() != null &&
@@ -123,6 +125,49 @@ class HomeActivity : AppCompatActivity() {
             topListAdapter!!.setTopList(AniListType.ANIME, topAnimeList as ArrayList<Any>)
         }
 
+    }
+
+    private fun requestTopManga() {
+        if (getTopMangaCall != null) {
+            return
+        }
+
+        requestingTopConstraintLayout!!.visibility = View.VISIBLE
+        topListAdapter!!.setTopList(AniListType.MANGA, ArrayList())
+
+        getTopMangaCall = AniListApiDao.getTopManga(1, 50)
+        getTopMangaCall!!.enqueue(object: Callback<MangaSearchResult?> {
+            override fun onFailure(call: Call<MangaSearchResult?>, t: Throwable) {
+                onGetTopMangaCallFinished(null)
+            }
+
+            override fun onResponse(
+                call: Call<MangaSearchResult?>,
+                response: Response<MangaSearchResult?>
+            ) {
+                onGetTopMangaCallFinished(response)
+            }
+
+        })
+    }
+
+    private fun onGetTopMangaCallFinished(response: Response<MangaSearchResult?>?) {
+        requestingTopConstraintLayout!!.visibility = View.GONE
+
+        if (getTopMangaCall!!.isCanceled) {
+            return
+        }
+
+        getTopMangaCall = null
+
+        if (response != null && response.isSuccessful &&
+            response.body() != null &&
+            response.body()!!.data != null &&
+            response.body()!!.data!!.page != null &&
+            response.body()!!.data!!.page!!.media != null) {
+            val topMangaList = response.body()!!.data!!.page!!.media
+            topListAdapter!!.setTopList(AniListType.MANGA, topMangaList as ArrayList<Any>)
+        }
     }
 
 
