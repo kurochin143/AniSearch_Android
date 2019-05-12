@@ -1,6 +1,7 @@
 package com.example.israel.anisearch.anilist_api
 
 import com.example.israel.anisearch.graphql.GraphQLQuery
+import com.example.israel.anisearch.graphql.GraphQLQueryBuilder
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import retrofit2.Call
@@ -34,31 +35,21 @@ class AniListApiDao {
         val apiService: AniListApiInterface = retrofit.create(
             AniListApiInterface::class.java)
 
-        fun searchAnime(page: Int, perPage: Int, query: String, sort: String = "SEARCH_MATCH"): Call<AnimeSearchResult?> {
-            return apiService.searchMedia(GraphQLQuery("{Page(page: $page, perPage: $perPage) {media(search: \"$query\", type: ANIME, sort: $sort, isAdult: false) {id title{romaji english native userPreferred} description coverImage{large medium} bannerImage}}}"))
+        fun searchAnime(page: Int, perPage: Int, search: String, sort: String = "SEARCH_MATCH"): Call<AnimeSearchResult?> {
+            // "{Page(page: $page, perPage: $perPage) {media(search: \"$query\", type: ANIME, sort: $sort, isAdult: false) {id title{romaji english native userPreferred} description coverImage{large medium} bannerImage}}}"
+            val queryBuilder = GraphQLQueryBuilder().addObject(
+                TPage.createGraphQLObject(page, perPage)
+                    .addObject(Anime.createGraphQLObject(sort, false, search))
+            )
+            return apiService.searchMedia(GraphQLQuery(queryBuilder.build()))
         }
 
         fun getTopAnime(page: Int, perPage: Int): Call<TopAnimeResult?> {
-            return apiService.searchMedia(GraphQLQuery(
-                "{" +
-                    "   Page(page: $page, perPage: $perPage){" +
-                    "       media(type: ANIME, sort: SCORE_DESC, isAdult: false){" +
-                    "           id " +
-                    "           title{" +
-                    "               romaji " +
-                    "               english " +
-                    "               native " +
-                    "               userPreferred" +
-                    "           }" +
-                    "           description " +
-                    "           coverImage{" +
-                    "               large " +
-                    "               medium" +
-                    "           }" +
-                    "           bannerImage" +
-                    "       }" +
-                    "   }" +
-                    "}"))
+            val queryBuilder = GraphQLQueryBuilder().addObject(
+                TPage.createGraphQLObject(page, perPage)
+                    .addObject(Anime.createGraphQLObject("SCORE_DESC", false, null))
+            )
+            return apiService.searchMedia(GraphQLQuery(queryBuilder.build()))
         }
 
     }
