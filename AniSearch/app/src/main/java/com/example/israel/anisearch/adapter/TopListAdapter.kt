@@ -15,13 +15,13 @@ import com.example.israel.anisearch.anilist_api.AniListType
 import com.example.israel.anisearch.anilist_api.Anime
 import com.example.israel.anisearch.anilist_api.Character
 import com.example.israel.anisearch.anilist_api.Manga
-import com.example.israel.anisearch.jikan_api.Jikan
 import com.example.israel.anisearch.network.NetworkStatics
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
 import java.io.BufferedInputStream
 import java.io.IOException
+import kotlin.jvm.internal.Ref
 
 class TopListAdapter : RecyclerView.Adapter<TopListAdapter.ViewHolder>() {
     private var type = AniListType.ANIME
@@ -79,14 +79,53 @@ class TopListAdapter : RecyclerView.Adapter<TopListAdapter.ViewHolder>() {
                     // preserve value
                     val positionT = viewHolder.adapterPosition
 
+                    val onRequestImageFinished = fun(call: Call, response: Response?) {
+                        if (call.isCanceled) {
+                            return
+                        }
+
+                        if (response != null && response.isSuccessful && response.body() != null) {
+                            val bufferedInputStream = BufferedInputStream(response.body()!!.byteStream())
+                            val downloadedImage = BitmapFactory.decodeStream(bufferedInputStream)
+                            bufferedInputStream.close()
+
+                            // do not cache if there is no image
+                            if (downloadedImage != null) {
+                                uiHandler.post {
+                                    isRequestingImages[positionT] = false
+
+                                    imageCaches[positionT] = Pair(imageUrl, downloadedImage)
+
+                                    // set the image directly
+                                    if (viewHolder.adapterPosition == positionT) {
+                                        viewHolder.requestingImageProgressBar.visibility = View.INVISIBLE
+                                        viewHolder.imageImageView.setImageBitmap(downloadedImage)
+                                    }
+
+                                    //notifyItemChanged(positionT)
+                                }
+
+                                return // successful
+                            }
+                        }
+
+                        // failed
+                        uiHandler.post {
+                            isRequestingImages[positionT] = false
+
+                            // @NOTE: this will request a download again
+                            notifyItemChanged(positionT)
+                        }
+                    }
+
                     NetworkStatics.requestImage(imageUrl).enqueue(object: Callback {
                         override fun onFailure(call: Call, e: IOException) {
                             e.printStackTrace()
-                            onRequestImageFinished(uiHandler, positionT, null, call,null)
+                            onRequestImageFinished(call, null)
                         }
 
                         override fun onResponse(call: Call, response: Response) {
-                            onRequestImageFinished(uiHandler, positionT, imageUrl, call, response)
+                            onRequestImageFinished(call, response)
                         }
                     })
                 }
@@ -99,39 +138,6 @@ class TopListAdapter : RecyclerView.Adapter<TopListAdapter.ViewHolder>() {
         } else { // no image url
             viewHolder.requestingImageProgressBar.visibility = View.INVISIBLE
             viewHolder.imageImageView.setImageBitmap(null)
-        }
-    }
-
-    private fun onRequestImageFinished(uiHandler: Handler, position: Int, url: String?, call: Call, response: Response?) {
-        if (call.isCanceled) {
-            return
-        }
-
-        if (response != null && response.isSuccessful && response.body() != null) {
-            val bufferedInputStream = BufferedInputStream(response.body()!!.byteStream())
-            val image = BitmapFactory.decodeStream(bufferedInputStream)
-            bufferedInputStream.close()
-
-            // do not cache if there is no image
-            if (image != null) {
-                uiHandler.post {
-                    isRequestingImages[position] = false
-
-                    imageCaches[position] = Pair(url, image)
-
-                    notifyItemChanged(position)
-                }
-
-                return // successful
-            }
-        }
-
-        // failed
-        uiHandler.post {
-            isRequestingImages[position] = false
-
-            // @NOTE: this will request a download again
-            notifyItemChanged(position)
         }
     }
 

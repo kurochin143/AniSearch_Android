@@ -13,7 +13,6 @@ import android.widget.TextView
 import com.example.israel.anisearch.R
 import com.example.israel.anisearch.anilist_api.AniListType
 import com.example.israel.anisearch.anilist_api.Anime
-import com.example.israel.anisearch.anilist_api.Character
 import com.example.israel.anisearch.anilist_api.Manga
 import com.example.israel.anisearch.network.NetworkStatics
 import okhttp3.*
@@ -68,14 +67,56 @@ class SearchResultsAdapter : RecyclerView.Adapter<SearchResultsAdapter.ViewHolde
                     // preserve value
                     val positionT = viewHolder.adapterPosition
 
+                    val onRequestImageFinished = fun(call: Call, response: Response?) {
+                        if (call.isCanceled) {
+                            return
+                        }
+
+                        if (response != null && response.isSuccessful && response.body() != null) {
+                            val bufferedInputStream = BufferedInputStream(response.body()!!.byteStream())
+                            val downloadedImage = BitmapFactory.decodeStream(bufferedInputStream)
+                            bufferedInputStream.close()
+
+                            // do not cache if there is no image
+                            if (downloadedImage != null) {
+                                uiHandler.post {
+                                    isRequestingImages[positionT] = false
+
+                                    imageCaches[positionT] = Pair(imageUrl, downloadedImage)
+
+                                    // set the image directly
+                                    if (viewHolder.adapterPosition == positionT) {
+                                        viewHolder.requestingImageProgressBar.visibility = View.INVISIBLE
+                                        viewHolder.imageImageView.setImageBitmap(downloadedImage)
+                                    }
+
+                                    //notifyItemChanged(positionT)
+                                }
+
+                                return // successful
+                            }
+                        }
+
+                        // failed
+                        uiHandler.post {
+                            isRequestingImages[positionT] = false
+
+
+                            if (viewHolder.adapterPosition == positionT) {
+                                // @NOTE: this will request a download again
+                                notifyItemChanged(positionT)
+                            }
+                        }
+                    }
+
                     NetworkStatics.requestImage(imageUrl).enqueue(object: Callback{
                         override fun onFailure(call: Call, e: IOException) {
                             e.printStackTrace()
-                            onRequestImageFinished(uiHandler, positionT, null, call,null)
+                            onRequestImageFinished(call, null)
                         }
 
                         override fun onResponse(call: Call, response: Response) {
-                            onRequestImageFinished(uiHandler, positionT, imageUrl, call, response)
+                            onRequestImageFinished(call, response)
                         }
                     })
                 }
@@ -88,41 +129,6 @@ class SearchResultsAdapter : RecyclerView.Adapter<SearchResultsAdapter.ViewHolde
         } else { // no image url
             viewHolder.requestingImageProgressBar.visibility = View.INVISIBLE
             viewHolder.imageImageView.setImageBitmap(null)
-        }
-    }
-
-    private fun onRequestImageFinished(uiHandler: Handler, position: Int, url: String?, call: Call, response: Response?) {
-        if (call.isCanceled) {
-            return
-        }
-
-        if (response != null && response.isSuccessful && response.body() != null) {
-            val bufferedInputStream = BufferedInputStream(response.body()!!.byteStream())
-            val image = BitmapFactory.decodeStream(bufferedInputStream)
-            bufferedInputStream.close()
-
-            // do not cache if there is no image
-            if (image != null) {
-                uiHandler.post {
-                    isRequestingImages[position] = false
-
-                    imageCaches[position] = Pair(url, image)
-
-                    // TODO what I really wanna do is directly set the image of the view holder if it exists. There's no way to get it
-
-                    notifyItemChanged(position)
-                }
-
-                return // successful
-            }
-        }
-
-        // failed
-        uiHandler.post {
-            isRequestingImages[position] = false
-
-            // @NOTE: this will request a download again
-            notifyItemChanged(position)
         }
     }
 
