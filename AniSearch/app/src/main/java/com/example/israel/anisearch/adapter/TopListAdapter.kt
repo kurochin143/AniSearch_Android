@@ -15,6 +15,7 @@ import com.example.israel.anisearch.anilist_api.AniListType
 import com.example.israel.anisearch.anilist_api.Anime
 import com.example.israel.anisearch.anilist_api.Character
 import com.example.israel.anisearch.anilist_api.Manga
+import com.example.israel.anisearch.model.Top
 import com.example.israel.anisearch.network.NetworkStatics
 import okhttp3.Call
 import okhttp3.Callback
@@ -24,10 +25,9 @@ import java.io.IOException
 import kotlin.jvm.internal.Ref
 
 class TopListAdapter : RecyclerView.Adapter<TopListAdapter.ViewHolder>() {
-    private var type = AniListType.ANIME
-    private var topList: ArrayList<Any> = ArrayList()
-    private var imageCaches: ArrayList<Pair<String?, Bitmap?>?> = ArrayList()
-    private var isRequestingImages: ArrayList<Boolean> = ArrayList()
+    private var topList: MutableList<Top> = ArrayList()
+    private var imageCaches: MutableList<Pair<String?, Bitmap?>?> = ArrayList()
+    private var isRequestingImages: MutableList<Boolean> = ArrayList()
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): ViewHolder {
         val viewHolder = ViewHolder(LayoutInflater.from(p0.context).inflate(R.layout.item_top, p0, false))
@@ -44,25 +44,9 @@ class TopListAdapter : RecyclerView.Adapter<TopListAdapter.ViewHolder>() {
         val rankStr = "# ${position + 1}"
         viewHolder.rankTextView.text = rankStr
 
-        var imageUrl: String? = null
-        when (type) {
-            AniListType.ANIME -> {
-                top as Anime
-                viewHolder.titleTextView.text = top.title?.romaji?: "no_title"
-                imageUrl = top.coverImage?.large
-            }
-            AniListType.MANGA -> {
-                top as Manga
-                viewHolder.titleTextView.text = top.title?.romaji?: "no_title"
-                imageUrl = top.coverImage?.large
-            }
-            AniListType.CHARACTER -> {
-                top as Character
-                viewHolder.titleTextView.text = top.name?.getFullName()
-                imageUrl = top.image?.large
-            }
-        }
+        viewHolder.titleTextView.text = top.name
 
+        var imageUrl: String? = top.imageUrl
         if (imageUrl != null) {
             val imageCache = imageCaches[viewHolder.adapterPosition]
             if (imageCache == null) { // image has not been cached yet
@@ -141,8 +125,7 @@ class TopListAdapter : RecyclerView.Adapter<TopListAdapter.ViewHolder>() {
         }
     }
 
-    fun setTopList(type: String, topList: ArrayList<Any>) {
-        this.type = type
+    fun setTopList(topList: MutableList<Top>) {
         this.topList = topList
         imageCaches = ArrayList(topList.size)
         isRequestingImages = ArrayList(topList.size)

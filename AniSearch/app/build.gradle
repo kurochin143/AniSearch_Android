@@ -22,6 +22,8 @@ android {
     }
 }
 
+apply plugin: 'kotlin-kapt'
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
@@ -46,7 +48,7 @@ dependencies {
 
     // Dagger
     implementation 'com.google.dagger:dagger:2.22.1'
-    annotationProcessor 'com.google.dagger:dagger-compiler:2.13'
+    kapt 'com.google.dagger:dagger-compiler:2.13'
 
     // RxJava
     implementation 'io.reactivex.rxjava2:rxjava:2.2.8'
@@ -55,4 +57,5 @@ dependencies {
     // Icepick
     implementation 'frankiesardo:icepick:3.2.0'
     annotationProcessor 'frankiesardo:icepick-processor:3.2.0'
+    implementation 'android.arch.lifecycle:extensions:1.1.1'
 }

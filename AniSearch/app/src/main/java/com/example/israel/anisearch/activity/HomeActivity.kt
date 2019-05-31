@@ -1,5 +1,7 @@
 package com.example.israel.anisearch.activity
 
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -14,22 +16,50 @@ import android.widget.Spinner
 import com.example.israel.anisearch.R
 import com.example.israel.anisearch.adapter.TopListAdapter
 import com.example.israel.anisearch.anilist_api.*
+import com.example.israel.anisearch.app.AniSearchApp
+import com.example.israel.anisearch.model.Top
+import com.example.israel.anisearch.view_model.TopViewModel
+import com.example.israel.anisearch.view_model.factory.TopVMFactory
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import javax.inject.Inject
 
 class HomeActivity : AppCompatActivity() {
 
     private var requestingTopConstraintLayout: ConstraintLayout? = null
     private var topTypesSpinner: Spinner? = null
-    private var topListAdapter: TopListAdapter? = null
-    private var getTopAnimeCall: Call<AnimeSearchResult?>? = null
-    private var getTopMangaCall: Call<MangaSearchResult?>? = null
-    private var getTopCharactersCall: Call<CharacterSearchResult?>? = null
+    private lateinit var topListAdapter: TopListAdapter
+
+    @Inject
+    lateinit var topVMFactory: TopVMFactory
+
+    private lateinit var topViewModel: TopViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
+
+        // setup recycler view
+        val topListRecyclerView = findViewById<RecyclerView>(R.id.top_list_recycler)
+        topListRecyclerView.setHasFixedSize(true)
+
+        topListRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+
+        topListAdapter = TopListAdapter()
+        topListRecyclerView.adapter = topListAdapter
+
+        // top view model
+        (application as AniSearchApp).getTopComponent().inject(this)
+        topViewModel = ViewModelProviders.of(this, topVMFactory).get(TopViewModel::class.java)
+
+        topViewModel.getTopAnimeLiveData().observe(this, Observer {
+            if (it != null) {
+                topListAdapter.setTopList(it.topList)
+            }
+
+            requestingTopConstraintLayout!!.visibility = View.GONE
+        })
 
         requestingTopConstraintLayout = findViewById(R.id.activity_home_constraint_requesting_top)
         topTypesSpinner = findViewById(R.id.activity_home_spinner_top_types)
@@ -38,20 +68,24 @@ class HomeActivity : AppCompatActivity() {
             }
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                topListAdapter!!.setTopList(ArrayList())
+
                 when (position) {
                     0 -> { // anime
-                        requestTopAnime()
+                        topViewModel.getTopAnime(1, 50)
                     }
                     1 -> { // manga
-                        requestTopManga()
+
                     }
                     2 -> { // character
-                        requestTopCharacters()
+
                     }
                     3 -> { // staff
 
                     }
                 }
+
+                requestingTopConstraintLayout!!.visibility = View.VISIBLE
             }
         }
 
@@ -68,146 +102,9 @@ class HomeActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        // setup recycler view
-        val topListRecyclerView = findViewById<RecyclerView>(R.id.top_list_recycler)
-        topListRecyclerView.setHasFixedSize(true)
-
-        topListRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-
-        topListAdapter = TopListAdapter()
-        topListRecyclerView.adapter = topListAdapter
-
-        requestTopAnime()
+        topViewModel.getTopAnime(1, 50)
 
     }
 
-    private fun requestTopAnime() {
-        if (getTopAnimeCall != null) {
-            return
-        }
-
-        requestingTopConstraintLayout!!.visibility = View.VISIBLE
-        topListAdapter!!.setTopList(AniListType.ANIME, ArrayList())
-
-        getTopAnimeCall = AniListApiDao.getTopAnime( 1, 50)
-        getTopAnimeCall!!.enqueue(object: Callback<AnimeSearchResult?> {
-            override fun onFailure(call: Call<AnimeSearchResult?>, t: Throwable) {
-                onGetTopAnimeCallFinished(null)
-            }
-
-            override fun onResponse(
-                call: Call<AnimeSearchResult?>,
-                response: Response<AnimeSearchResult?>
-            ) {
-                onGetTopAnimeCallFinished(response)
-            }
-
-        })
-    }
-
-    private fun onGetTopAnimeCallFinished(response: Response<AnimeSearchResult?>?) {
-        requestingTopConstraintLayout!!.visibility = View.GONE
-
-        if (getTopAnimeCall!!.isCanceled) {
-            return
-        }
-
-        getTopAnimeCall = null
-
-        if (response != null && response.isSuccessful &&
-            response.body() != null &&
-            response.body()!!.data != null &&
-            response.body()!!.data!!.page != null &&
-            response.body()!!.data!!.page!!.media != null) {
-            val topAnimeList = response.body()!!.data!!.page!!.media
-            topListAdapter!!.setTopList(AniListType.ANIME, topAnimeList as ArrayList<Any>)
-        }
-
-    }
-
-    private fun requestTopManga() {
-        if (getTopMangaCall != null) {
-            return
-        }
-
-        requestingTopConstraintLayout!!.visibility = View.VISIBLE
-        topListAdapter!!.setTopList(AniListType.MANGA, ArrayList())
-
-        getTopMangaCall = AniListApiDao.getTopManga(1, 50)
-        getTopMangaCall!!.enqueue(object: Callback<MangaSearchResult?> {
-            override fun onFailure(call: Call<MangaSearchResult?>, t: Throwable) {
-                onGetTopMangaCallFinished(null)
-            }
-
-            override fun onResponse(
-                call: Call<MangaSearchResult?>,
-                response: Response<MangaSearchResult?>
-            ) {
-                onGetTopMangaCallFinished(response)
-            }
-
-        })
-    }
-
-    private fun onGetTopMangaCallFinished(response: Response<MangaSearchResult?>?) {
-        requestingTopConstraintLayout!!.visibility = View.GONE
-
-        if (getTopMangaCall!!.isCanceled) {
-            return
-        }
-
-        getTopMangaCall = null
-
-        if (response != null && response.isSuccessful &&
-            response.body() != null &&
-            response.body()!!.data != null &&
-            response.body()!!.data!!.page != null &&
-            response.body()!!.data!!.page!!.media != null) {
-            val topMangaList = response.body()!!.data!!.page!!.media
-            topListAdapter!!.setTopList(AniListType.MANGA, topMangaList as ArrayList<Any>)
-        }
-    }
-
-    private fun requestTopCharacters() {
-        if (getTopCharactersCall != null) {
-            return
-        }
-
-        requestingTopConstraintLayout!!.visibility = View.VISIBLE
-        topListAdapter!!.setTopList(AniListType.CHARACTER, ArrayList())
-
-        getTopCharactersCall = AniListApiDao.getTopCharacters(1, 50)
-        getTopCharactersCall!!.enqueue(object: Callback<CharacterSearchResult?> {
-            override fun onFailure(call: Call<CharacterSearchResult?>, t: Throwable) {
-                onGetTopCharactersCallFinished(null)
-            }
-
-            override fun onResponse(
-                call: Call<CharacterSearchResult?>,
-                response: Response<CharacterSearchResult?>
-            ) {
-                onGetTopCharactersCallFinished(response)
-            }
-        })
-    }
-
-    private fun onGetTopCharactersCallFinished(response: Response<CharacterSearchResult?>?) {
-        requestingTopConstraintLayout!!.visibility = View.GONE
-
-        if (getTopCharactersCall!!.isCanceled) {
-            return
-        }
-
-        getTopCharactersCall = null
-
-        if (response != null && response.isSuccessful &&
-            response.body() != null &&
-            response.body()!!.data != null &&
-            response.body()!!.data!!.page != null &&
-            response.body()!!.data!!.page!!.characters != null) {
-            val topCharacters = response.body()!!.data!!.page!!.characters
-            topListAdapter!!.setTopList(AniListType.CHARACTER, topCharacters as ArrayList<Any>)
-        }
-    }
 
 }

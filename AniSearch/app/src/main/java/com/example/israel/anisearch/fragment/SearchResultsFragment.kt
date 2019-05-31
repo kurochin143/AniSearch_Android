@@ -15,19 +15,23 @@ import com.example.israel.anisearch.anilist_api.AniListApiDao
 import com.example.israel.anisearch.anilist_api.AniListType
 import com.example.israel.anisearch.anilist_api.AnimeSearchResult
 import com.example.israel.anisearch.jikan_api.*
+import io.reactivex.disposables.Disposable
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import javax.inject.Inject
 
 class SearchResultsFragment : Fragment() {
 
     private var query: String = ""
     private var page: Int = 0
     private var options: HashMap<String, String> = HashMap()
-    private var fragmentView: View? = null
-    private var animeSearchCall: Call<AnimeSearchResult?>? = null
     private var requestingProgressBar: ProgressBar? = null
     private var searchResultsAdapter: SearchResultsAdapter? = null
+    private var searchDisposable: Disposable? = null
+
+    @Inject
+    lateinit var aniListApiDao: AniListApiDao
 
     companion object {
         private const val SPAN_COUNT = 3
@@ -37,7 +41,6 @@ class SearchResultsFragment : Fragment() {
         const val OPTIONS_KEY_RATED_LIST_STR = "rated_list_str"
         const val OPTION_LIST_DELIMITER = ','
 
-        @JvmStatic
         fun newInstance(query: String, page: Int, options: HashMap<String, String>) =
             SearchResultsFragment().apply {
                 arguments = Bundle().apply {
@@ -62,73 +65,44 @@ class SearchResultsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        fragmentView = inflater.inflate(R.layout.fragment_search_results, container, false)
+        return inflater.inflate(R.layout.fragment_search_results, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         // progress bar
-        requestingProgressBar = fragmentView!!.findViewById(R.id.fragment_search_results_requesting)
+        requestingProgressBar = view.findViewById(R.id.fragment_search_results_requesting)
 
         // recycler view
-        val recyclerView = fragmentView!!.findViewById<RecyclerView>(R.id.fragment_search_results_recycler)
+        val recyclerView = view.findViewById<RecyclerView>(R.id.fragment_search_results_recycler)
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = GridLayoutManager(context, SPAN_COUNT)
         searchResultsAdapter = SearchResultsAdapter()
         recyclerView.adapter = searchResultsAdapter
 
         requestSearchAnime()
-
-        return fragmentView
     }
 
     private fun requestSearchAnime() {
-        if (animeSearchCall != null) {
-            return
-        }
+        searchDisposable?.dispose()
 
         requestingProgressBar!!.visibility = View.VISIBLE
         searchResultsAdapter!!.setSearchResults(AniListType.ANIME, ArrayList())
 
-        animeSearchCall = AniListApiDao.searchAnime(page, 50, query)
+        searchDisposable = aniListApiDao.searchAnime(page, 50, query)
+            .subscribe({
+                // TODO
+            }, {
 
-        animeSearchCall!!.enqueue(object: Callback<AnimeSearchResult?>{
-            override fun onFailure(call: Call<AnimeSearchResult?>, t: Throwable) {
-                t.printStackTrace()
-                onAnimeSearchCallFinished(null)
-            }
+            })
 
-            override fun onResponse(
-                call: Call<AnimeSearchResult?>,
-                response: Response<AnimeSearchResult?>
-            ) {
-                onAnimeSearchCallFinished(response)
-            }
-        })
-    }
-
-    fun onAnimeSearchCallFinished(response: Response<AnimeSearchResult?>?) {
-        requestingProgressBar!!.visibility = View.INVISIBLE
-
-        if (animeSearchCall!!.isCanceled) {
-            animeSearchCall = null
-            return
-        }
-        animeSearchCall = null
-
-        if (response != null && response.isSuccessful &&
-            response.body() != null &&
-            response.body()!!.data != null &&
-            response.body()!!.data!!.page != null && response.body()!!.data!!.page!!.media != null) {
-            val animeList = response.body()!!.data!!.page!!.media
-            searchResultsAdapter!!.setSearchResults(AniListType.ANIME, animeList as ArrayList<Any>)
-        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
 
-        if (animeSearchCall != null) {
-            animeSearchCall!!.cancel()
-            animeSearchCall = null
-        }
+        searchDisposable?.dispose()
     }
 
 }
