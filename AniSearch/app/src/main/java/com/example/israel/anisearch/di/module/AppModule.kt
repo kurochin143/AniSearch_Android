@@ -1,4 +1,4 @@
-package com.example.israel.anisearch.module
+package com.example.israel.anisearch.di.module
 
 import dagger.Module
 

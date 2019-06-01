@@ -1,4 +1,4 @@
-package com.example.israel.anisearch.module
+package com.example.israel.anisearch.di.module
 
 import com.example.israel.anisearch.anilist_api.AniListApiDao
 import com.example.israel.anisearch.anilist_api.ApiService

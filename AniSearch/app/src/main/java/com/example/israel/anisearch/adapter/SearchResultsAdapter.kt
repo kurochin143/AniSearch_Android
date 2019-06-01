@@ -14,14 +14,15 @@ import com.example.israel.anisearch.R
 import com.example.israel.anisearch.anilist_api.AniListType
 import com.example.israel.anisearch.anilist_api.Anime
 import com.example.israel.anisearch.anilist_api.Manga
+import com.example.israel.anisearch.model.SearchResult
+import com.example.israel.anisearch.model.SearchResults
 import com.example.israel.anisearch.network.NetworkStatics
 import okhttp3.*
 import java.io.BufferedInputStream
 import java.io.IOException
 
 class SearchResultsAdapter : RecyclerView.Adapter<SearchResultsAdapter.ViewHolder>() {
-    private var type = AniListType.ANIME
-    private var searchResults: ArrayList<Any> = ArrayList()
+    private var searchResults: SearchResults = SearchResults(AniListType.ANIME, ArrayList())
     private var imageCaches: ArrayList<Pair<String?, Bitmap?>?> = ArrayList()
     private var isRequestingImages: ArrayList<Boolean> = ArrayList()
 
@@ -31,26 +32,15 @@ class SearchResultsAdapter : RecyclerView.Adapter<SearchResultsAdapter.ViewHolde
     }
 
     override fun getItemCount(): Int {
-        return searchResults.size
+        return searchResults.searchResults.size
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        val searchResult = searchResults[position]
+        val searchResult = searchResults.searchResults[position]
 
-        var imageUrl: String? = null
-        when (type) {
-            AniListType.ANIME -> {
-                searchResult as Anime
-                viewHolder.titleTextView.text = searchResult.title?.romaji?: "no_title"
-                imageUrl = searchResult.coverImage?.large
-            }
-            AniListType.MANGA -> {
-                searchResult as Manga
-                viewHolder.titleTextView.text = searchResult.title?.romaji?: "no_title"
-                imageUrl = searchResult.coverImage?.large
-            }
-        }
+        viewHolder.titleTextView.text = searchResult.name
 
+        var imageUrl: String? = searchResult.imageUrl
         if (imageUrl != null) {
             val imageCache = imageCaches[viewHolder.adapterPosition]
             if (imageCache == null) { // image has not been cached yet
@@ -132,12 +122,11 @@ class SearchResultsAdapter : RecyclerView.Adapter<SearchResultsAdapter.ViewHolde
         }
     }
 
-    fun setSearchResults(type: String, searchResults: ArrayList<Any>) {
-        this.type = type
+    fun setSearchResults(searchResults: SearchResults) {
         this.searchResults = searchResults
-        imageCaches = ArrayList(this.searchResults.size)
-        isRequestingImages = ArrayList(this.searchResults.size)
-        repeat(this.searchResults.size) {
+        imageCaches = ArrayList(this.searchResults.searchResults.size)
+        isRequestingImages = ArrayList(this.searchResults.searchResults.size)
+        repeat(this.searchResults.searchResults.size) {
             imageCaches.add(null)
             isRequestingImages.add(false)
         }

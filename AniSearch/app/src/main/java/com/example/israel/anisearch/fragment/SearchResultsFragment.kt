@@ -1,6 +1,8 @@
 package com.example.israel.anisearch.fragment
 
 
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
@@ -11,42 +13,36 @@ import android.view.ViewGroup
 import android.widget.ProgressBar
 import com.example.israel.anisearch.R
 import com.example.israel.anisearch.adapter.SearchResultsAdapter
-import com.example.israel.anisearch.anilist_api.AniListApiDao
-import com.example.israel.anisearch.anilist_api.AniListType
-import com.example.israel.anisearch.anilist_api.AnimeSearchResult
-import com.example.israel.anisearch.jikan_api.*
+import com.example.israel.anisearch.anilist_api.MediaSearchSort
+import com.example.israel.anisearch.app.AniSearchApp
+import com.example.israel.anisearch.view_model.SearchViewModel
+import com.example.israel.anisearch.view_model.factory.SearchVMFactory
 import io.reactivex.disposables.Disposable
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import kotlinx.android.synthetic.main.fragment_search_results.*
 import javax.inject.Inject
 
 class SearchResultsFragment : Fragment() {
 
     private var query: String = ""
-    private var page: Int = 0
-    private var options: HashMap<String, String> = HashMap()
-    private var requestingProgressBar: ProgressBar? = null
+    private var page: Int = 1
+    private var hasNextPage: Boolean = true
+
     private var searchResultsAdapter: SearchResultsAdapter? = null
-    private var searchDisposable: Disposable? = null
 
     @Inject
-    lateinit var aniListApiDao: AniListApiDao
+    lateinit var searchResultVMFactory: SearchVMFactory
+
+    lateinit var searchViewModel: SearchViewModel
 
     companion object {
         private const val SPAN_COUNT = 3
         private const val ARG_QUERY = "query"
-        private const val ARG_PAGE = "page"
-        private const val ARG_OPTIONS = "options"
-        const val OPTIONS_KEY_RATED_LIST_STR = "rated_list_str"
-        const val OPTION_LIST_DELIMITER = ','
+        private const val PER_PAGE: Int = 50
 
-        fun newInstance(query: String, page: Int, options: HashMap<String, String>) =
+        fun newInstance(query: String) =
             SearchResultsFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_QUERY, query)
-                    putInt(ARG_PAGE, page)
-                    putSerializable(ARG_OPTIONS, options)
                 }
             }
     }
@@ -55,8 +51,6 @@ class SearchResultsFragment : Fragment() {
         super.onCreate(savedInstanceState)
         arguments?.let {
             query = it.getString(ARG_QUERY)!!
-            page = it.getInt(ARG_PAGE)
-            options = it.getSerializable(ARG_OPTIONS) as HashMap<String, String>
         }
     }
 
@@ -71,38 +65,28 @@ class SearchResultsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // progress bar
-        requestingProgressBar = view.findViewById(R.id.fragment_search_results_requesting)
+        (activity!!.application as AniSearchApp).getSearchComponent().inject(this)
+        searchViewModel = ViewModelProviders.of(this, searchResultVMFactory).get(SearchViewModel::class.java)
 
         // recycler view
-        val recyclerView = view.findViewById<RecyclerView>(R.id.fragment_search_results_recycler)
-        recyclerView.setHasFixedSize(true)
-        recyclerView.layoutManager = GridLayoutManager(context, SPAN_COUNT)
+        f_search_results_r.setHasFixedSize(true)
+        f_search_results_r.layoutManager = GridLayoutManager(context, SPAN_COUNT)
         searchResultsAdapter = SearchResultsAdapter()
-        recyclerView.adapter = searchResultsAdapter
+        f_search_results_r.adapter = searchResultsAdapter
 
-        requestSearchAnime()
-    }
+        // live data
+        searchViewModel.getSearchResultsLiveData().observe(this, Observer {
+            if (it == null) {
+                return@Observer
+            }
 
-    private fun requestSearchAnime() {
-        searchDisposable?.dispose()
+            searchResultsAdapter!!.setSearchResults(it)
 
-        requestingProgressBar!!.visibility = View.VISIBLE
-        searchResultsAdapter!!.setSearchResults(AniListType.ANIME, ArrayList())
+            f_search_results_pb_requesting.visibility = View.GONE
+        })
 
-        searchDisposable = aniListApiDao.searchAnime(page, 50, query)
-            .subscribe({
-                // TODO
-            }, {
-
-            })
-
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-        searchDisposable?.dispose()
+        // search anime
+        searchViewModel.searchAnime(1, PER_PAGE, query, MediaSearchSort.SEARCH_MATCH)
     }
 
 }

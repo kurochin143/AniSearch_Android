@@ -1,6 +1,6 @@
-package com.example.israel.anisearch.component;
+package com.example.israel.anisearch.di.component;
 
-import com.example.israel.anisearch.module.*
+import com.example.israel.anisearch.di.module.*
 import dagger.Component
 import javax.inject.Singleton
 
@@ -9,5 +9,6 @@ import javax.inject.Singleton
 interface MainComponent {
 
     fun plus(topModule: TopModule) : TopComponent
+    fun plus(searchModule: SearchModule) : SearchComponent
 
 }

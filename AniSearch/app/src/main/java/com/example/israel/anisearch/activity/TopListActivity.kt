@@ -15,17 +15,16 @@ import android.widget.ArrayAdapter
 import android.widget.Spinner
 import com.example.israel.anisearch.R
 import com.example.israel.anisearch.adapter.TopListAdapter
-import com.example.israel.anisearch.anilist_api.*
 import com.example.israel.anisearch.app.AniSearchApp
-import com.example.israel.anisearch.model.Top
 import com.example.israel.anisearch.view_model.TopViewModel
 import com.example.israel.anisearch.view_model.factory.TopVMFactory
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import javax.inject.Inject
 
-class HomeActivity : AppCompatActivity() {
+class TopListActivity : AppCompatActivity() {
+
+    companion object {
+        private const val PER_PAGE = 50
+    }
 
     private var requestingTopConstraintLayout: ConstraintLayout? = null
     private var topTypesSpinner: Spinner? = null
@@ -38,7 +37,7 @@ class HomeActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_home)
+        setContentView(R.layout.activity_top_list)
 
         // setup recycler view
         val topListRecyclerView = findViewById<RecyclerView>(R.id.top_list_recycler)
@@ -53,7 +52,7 @@ class HomeActivity : AppCompatActivity() {
         (application as AniSearchApp).getTopComponent().inject(this)
         topViewModel = ViewModelProviders.of(this, topVMFactory).get(TopViewModel::class.java)
 
-        topViewModel.getTopAnimeLiveData().observe(this, Observer {
+        topViewModel.getTopListLiveData().observe(this, Observer {
             if (it != null) {
                 topListAdapter.setTopList(it.topList)
             }
@@ -62,6 +61,8 @@ class HomeActivity : AppCompatActivity() {
         })
 
         requestingTopConstraintLayout = findViewById(R.id.activity_home_constraint_requesting_top)
+
+        // spinner
         topTypesSpinner = findViewById(R.id.activity_home_spinner_top_types)
         topTypesSpinner!!.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -72,13 +73,13 @@ class HomeActivity : AppCompatActivity() {
 
                 when (position) {
                     0 -> { // anime
-                        topViewModel.getTopAnime(1, 50)
+                        topViewModel.getTopAnime(1, PER_PAGE)
                     }
                     1 -> { // manga
-
+                        topViewModel.getTopManga(1, PER_PAGE)
                     }
                     2 -> { // character
-
+                        topViewModel.getTopCharacters(1, PER_PAGE)
                     }
                     3 -> { // staff
 
@@ -89,10 +90,14 @@ class HomeActivity : AppCompatActivity() {
             }
         }
 
+        // add types to spinner
         ArrayAdapter.createFromResource(this, R.array.top_types, android.R.layout.simple_spinner_item).also {
             it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             topTypesSpinner!!.adapter = it
         }
+
+        // request anime
+        topViewModel.getTopAnime(1, PER_PAGE)
 
         // start search activity button
         var searchButton = findViewById<FloatingActionButton>(R.id.activity_home_button_search)
@@ -101,8 +106,6 @@ class HomeActivity : AppCompatActivity() {
             val intent = Intent(this, SearchActivity::class.java)
             startActivity(intent)
         }
-
-        topViewModel.getTopAnime(1, 50)
 
     }
 

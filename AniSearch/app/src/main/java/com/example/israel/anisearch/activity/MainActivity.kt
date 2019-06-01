@@ -11,7 +11,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val intent = Intent(this, HomeActivity::class.java)
+        val intent = Intent(this, TopListActivity::class.java)
         startActivity(intent)
         finish()
     }

@@ -1,4 +1,4 @@
-package com.example.israel.anisearch.component.scope
+package com.example.israel.anisearch.di.scope
 
 import javax.inject.Scope
 

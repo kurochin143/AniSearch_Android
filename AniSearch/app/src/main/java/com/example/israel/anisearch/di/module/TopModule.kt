@@ -1,4 +1,4 @@
-package com.example.israel.anisearch.module
+package com.example.israel.anisearch.di.module
 
 import com.example.israel.anisearch.repository.AniSearchRepository
 import com.example.israel.anisearch.view_model.factory.TopVMFactory
