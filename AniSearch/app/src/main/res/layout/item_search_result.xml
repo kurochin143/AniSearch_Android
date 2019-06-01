@@ -20,7 +20,7 @@
             <FrameLayout
                     android:id="@+id/item_search_result_frame_image"
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
+                    android:layout_height="@dimen/item_search_result_height"
                     app:layout_constraintTop_toTopOf="parent">
 
                 <ImageView

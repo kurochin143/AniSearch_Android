@@ -24,9 +24,6 @@ import javax.inject.Inject
 class SearchResultsFragment : Fragment() {
 
     private var query: String = ""
-    private var page: Int = 1
-    private var hasNextPage: Boolean = true
-
     private var searchResultsAdapter: SearchResultsAdapter? = null
 
     @Inject
@@ -71,7 +68,11 @@ class SearchResultsFragment : Fragment() {
         // recycler view
         f_search_results_r.setHasFixedSize(true)
         f_search_results_r.layoutManager = GridLayoutManager(context, SPAN_COUNT)
-        searchResultsAdapter = SearchResultsAdapter()
+        searchResultsAdapter = SearchResultsAdapter(object: SearchResultsAdapter.OnLoadNextPageListener {
+            override fun loadNextPage(page: Int) {
+                searchViewModel.searchAnime(page, PER_PAGE, query)
+            }
+        })
         f_search_results_r.adapter = searchResultsAdapter
 
         // live data
@@ -80,7 +81,11 @@ class SearchResultsFragment : Fragment() {
                 return@Observer
             }
 
-            searchResultsAdapter!!.setSearchResults(it)
+            if (it.currentPage == 1) {
+                searchResultsAdapter!!.setSearchResults(it)
+            } else {
+                searchResultsAdapter!!.addSearchResults(it)
+            }
 
             f_search_results_pb_requesting.visibility = View.GONE
         })

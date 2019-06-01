@@ -29,7 +29,12 @@ class SearchViewModel(private val aniSearchRepository: AniSearchRepository) : Vi
                     searchResults.add(SearchResult(AniListType.ANIME, anime.id, anime.title?.english, anime.coverImage?.medium))
                 }
 
-                return@map SearchResults(AniListType.ANIME, searchResults)
+                return@map SearchResults(
+                    AniListType.ANIME,
+                    searchResults,
+                    animeSearchResult.data!!.page!!.pageInfo!!.currentPage!!,
+                    animeSearchResult.data!!.page!!.pageInfo!!.lastPage!!
+                )
             }
             .subscribe({
                 searchResultsLiveData.postValue(it)

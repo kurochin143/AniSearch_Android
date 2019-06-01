@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                             android:layout_width="match_parent"
+                                             android:layout_height="wrap_content">
+
+
+    <Button
+            android:id="@+id/i_search_result_load_more_b"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/item_search_result_height"
+    android:text="Load More"/>
+
+</android.support.constraint.ConstraintLayout>
