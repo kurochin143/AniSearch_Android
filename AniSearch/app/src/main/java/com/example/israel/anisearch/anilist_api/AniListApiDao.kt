@@ -1,56 +1,61 @@
 package com.example.israel.anisearch.anilist_api
 
+import com.example.israel.anisearch.anilist_api.statics.CharacterSearchSort
+import com.example.israel.anisearch.anilist_api.statics.MediaSearchSort
+import com.example.israel.anisearch.anilist_api.statics.StaffSearchSort
 import com.example.israel.anisearch.graphql.GraphQLQuery
 import com.example.israel.anisearch.graphql.GraphQLQueryBuilder
 import io.reactivex.Observable
 
-typealias AnimeSearchResult = TData<TPage<TMediaList<Anime>>>
-
-typealias MangaSearchResult = TData<TPage<TMediaList<Manga>>>
-
-typealias CharacterSearchResult = TData<TPage<Characters>>
-
 class AniListApiDao(private var apiService: ApiService) {
 
     fun getTopAnime(page: Int, perPage: Int): Observable<AnimeSearchResult?> {
+        return searchAnime(page, perPage, null, MediaSearchSort.SCORE_DESC)
+    }
+
+    fun getTopManga(page: Int, perPage: Int): Observable<MangaSearchResult?> {
+        return searchManga(page, perPage, null, MediaSearchSort.SCORE_DESC)
+    }
+
+    fun getTopCharacters(page: Int, perPage: Int): Observable<CharacterSearchResult?> {
+        return searchCharacter(page, perPage, null, CharacterSearchSort.FAVOURITES_DESC)
+    }
+
+    fun getTopStaffs(page: Int, perPage: Int): Observable<StaffSearchResult?> {
+        return searchStaff(page, perPage, null, StaffSearchSort.FAVOURITES_DESC)
+    }
+
+    fun searchAnime(page: Int, perPage: Int, search: String?, sort: String): Observable<AnimeSearchResult?> {
+        // "{Page(page: $page, perPage: $perPage) {media(search: \"$query\", type: ANIME, sort: $sort, isAdult: false) {id title{romaji english native userPreferred} description coverImage{large medium} bannerImage}}}"
         val queryBuilder = GraphQLQueryBuilder().addObject(
             TPage.createGraphQLObject(page, perPage)
-                .addObject(Anime.createGraphQLObject(MediaSearchSort.SCORE_DESC.value, false, null))
+                .addObject(Anime.createGraphQLObject(sort, false, search))
         )
         return apiService.searchAnime(GraphQLQuery(queryBuilder.build()))
     }
 
-    fun getTopManga(page: Int, perPage: Int): Observable<MangaSearchResult?> {
+    fun searchManga(page: Int, perPage: Int, search: String?, sort: String): Observable<MangaSearchResult?> {
         val queryBuilder = GraphQLQueryBuilder().addObject(
             TPage.createGraphQLObject(page, perPage)
-                .addObject(Manga.createGraphQLObject(MediaSearchSort.SCORE_DESC.value, false, null))
+                .addObject(Manga.createGraphQLObject(sort, false, search))
         )
         return apiService.searchManga(GraphQLQuery(queryBuilder.build()))
     }
 
-    fun getTopCharacters(page: Int, perPage: Int): Observable<CharacterSearchResult?> {
+    fun searchCharacter(page: Int, perPage: Int, search: String?, sort: String): Observable<CharacterSearchResult?> {
         val queryBuilder = GraphQLQueryBuilder().addObject(
             TPage.createGraphQLObject(page, perPage)
-                .addObject(Character.createGraphQLObject("FAVOURITES_DESC", null))
+                .addObject(Character.createGraphQLObject(sort, search))
         )
         return apiService.searchCharacter(GraphQLQuery(queryBuilder.build()))
     }
 
-    fun searchAnime(page: Int, perPage: Int, search: String, sort: MediaSearchSort): Observable<AnimeSearchResult?> {
-        // "{Page(page: $page, perPage: $perPage) {media(search: \"$query\", type: ANIME, sort: $sort, isAdult: false) {id title{romaji english native userPreferred} description coverImage{large medium} bannerImage}}}"
+    fun searchStaff(page: Int, perPage: Int, search: String?, sort: String): Observable<StaffSearchResult?> {
         val queryBuilder = GraphQLQueryBuilder().addObject(
             TPage.createGraphQLObject(page, perPage)
-                .addObject(Anime.createGraphQLObject(sort.value, false, search))
+                .addObject(Staff.createGraphQLObject(sort, search))
         )
-        return apiService.searchAnime(GraphQLQuery(queryBuilder.build()))
-    }
-
-    fun searchManga(page: Int, perPage: Int, search: String, sort: MediaSearchSort): Observable<MangaSearchResult?> {
-        val queryBuilder = GraphQLQueryBuilder().addObject(
-            TPage.createGraphQLObject(page, perPage)
-                .addObject(Manga.createGraphQLObject(sort.value, false, search))
-        )
-        return apiService.searchManga(GraphQLQuery(queryBuilder.build()))
+        return apiService.searchStaff(GraphQLQuery(queryBuilder.build()))
     }
 
 }

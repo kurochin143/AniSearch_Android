@@ -11,10 +11,6 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.example.israel.anisearch.R
-import com.example.israel.anisearch.anilist_api.AniListType
-import com.example.israel.anisearch.anilist_api.Anime
-import com.example.israel.anisearch.anilist_api.Character
-import com.example.israel.anisearch.anilist_api.Manga
 import com.example.israel.anisearch.model.Top
 import com.example.israel.anisearch.network.NetworkStatics
 import okhttp3.Call
@@ -22,7 +18,6 @@ import okhttp3.Callback
 import okhttp3.Response
 import java.io.BufferedInputStream
 import java.io.IOException
-import kotlin.jvm.internal.Ref
 
 class TopListAdapter : RecyclerView.Adapter<TopListAdapter.ViewHolder>() {
     private var topList: MutableList<Top> = ArrayList()

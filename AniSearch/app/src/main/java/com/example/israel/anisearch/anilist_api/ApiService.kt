@@ -6,6 +6,11 @@ import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.POST
 
+typealias AnimeSearchResult = TData<TPage<TMediaList<Anime>>>
+typealias MangaSearchResult = TData<TPage<TMediaList<Manga>>>
+typealias CharacterSearchResult = TData<TPage<Characters>>
+typealias StaffSearchResult = TData<TPage<Staffs>>
+
 interface ApiService {
     @POST("/")
     fun searchAnime(@Body query: GraphQLQuery): Observable<AnimeSearchResult?>
@@ -15,4 +20,7 @@ interface ApiService {
 
     @POST("/")
     fun searchCharacter(@Body query: GraphQLQuery): Observable<CharacterSearchResult?>
+
+    @POST("/")
+    fun searchStaff(@Body query: GraphQLQuery): Observable<StaffSearchResult?>
 }

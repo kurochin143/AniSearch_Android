@@ -11,7 +11,7 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.example.israel.anisearch.R
-import com.example.israel.anisearch.anilist_api.AniListType
+import com.example.israel.anisearch.anilist_api.statics.AniListType
 import com.example.israel.anisearch.model.SearchResults
 import com.example.israel.anisearch.network.NetworkStatics
 import kotlinx.android.synthetic.main.item_search_result_load_more.view.*

@@ -6,7 +6,6 @@ class Manga : Media() {
     companion object {
         fun createGraphQLObject(sort: String, isAdult: Boolean, search: String?): GraphQLObject {
             return Media.createGraphQLObject("MANGA", sort, isAdult, search).also {
-                // TODO
             }
         }
     }

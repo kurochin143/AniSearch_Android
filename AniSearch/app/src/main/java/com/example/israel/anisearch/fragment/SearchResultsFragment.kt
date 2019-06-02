@@ -6,24 +6,23 @@ import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
 import com.example.israel.anisearch.R
 import com.example.israel.anisearch.adapter.SearchResultsAdapter
-import com.example.israel.anisearch.anilist_api.MediaSearchSort
+import com.example.israel.anisearch.anilist_api.statics.AniListType
+import com.example.israel.anisearch.anilist_api.statics.MediaSearchSort
 import com.example.israel.anisearch.app.AniSearchApp
 import com.example.israel.anisearch.view_model.SearchViewModel
 import com.example.israel.anisearch.view_model.factory.SearchVMFactory
-import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.fragment_search_results.*
 import javax.inject.Inject
 
 class SearchResultsFragment : Fragment() {
 
-    private var query: String = ""
+    private lateinit var query: String
+    private lateinit var type: String
     private var searchResultsAdapter: SearchResultsAdapter? = null
 
     @Inject
@@ -34,12 +33,14 @@ class SearchResultsFragment : Fragment() {
     companion object {
         private const val SPAN_COUNT = 3
         private const val ARG_QUERY = "query"
+        private const val ARG_TYPE = "type"
         private const val PER_PAGE: Int = 50
 
-        fun newInstance(query: String) =
+        fun newInstance(query: String, type: String) =
             SearchResultsFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_QUERY, query)
+                    putString(ARG_TYPE, type)
                 }
             }
     }
@@ -48,6 +49,7 @@ class SearchResultsFragment : Fragment() {
         super.onCreate(savedInstanceState)
         arguments?.let {
             query = it.getString(ARG_QUERY)!!
+            type = it.getString(ARG_TYPE)!!
         }
     }
 
@@ -70,7 +72,7 @@ class SearchResultsFragment : Fragment() {
         f_search_results_r.layoutManager = GridLayoutManager(context, SPAN_COUNT)
         searchResultsAdapter = SearchResultsAdapter(object: SearchResultsAdapter.OnLoadNextPageListener {
             override fun loadNextPage(page: Int) {
-                searchViewModel.searchAnime(page, PER_PAGE, query)
+                search(page)
             }
         })
         f_search_results_r.adapter = searchResultsAdapter
@@ -90,8 +92,15 @@ class SearchResultsFragment : Fragment() {
             f_search_results_pb_requesting.visibility = View.GONE
         })
 
-        // search anime
-        searchViewModel.searchAnime(1, PER_PAGE, query, MediaSearchSort.SEARCH_MATCH)
+        // page 1 search
+        search(1)
+    }
+
+    private fun search(page: Int) {
+        when (type) {
+            AniListType.ANIME -> searchViewModel.searchAnime(page, PER_PAGE, query, MediaSearchSort.SEARCH_MATCH)
+            AniListType.MANGA -> searchViewModel.searchManga(page, PER_PAGE, query, MediaSearchSort.SEARCH_MATCH)
+        }
     }
 
 }

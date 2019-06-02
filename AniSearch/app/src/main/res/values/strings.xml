@@ -7,7 +7,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="rated">Rated</string>
 
-    <string-array name="top_types">
+    <string-array name="search_types">
         <item>Anime</item>
         <item>Manga</item>
         <item>Character</item>

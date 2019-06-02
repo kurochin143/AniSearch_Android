@@ -18,7 +18,7 @@
                 android:layout_height="wrap_content">
 
             <FrameLayout
-                    android:id="@+id/item_search_result_frame_image"
+                    android:id="@+id/i_search_result_fl_image"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/item_search_result_height"
                     app:layout_constraintTop_toTopOf="parent">
@@ -46,7 +46,7 @@
                     android:textColor="@color/colorTextDark"
                     android:maxLines="2"
                     android:minLines="2"
-                    app:layout_constraintTop_toBottomOf="@+id/item_search_result_frame_image"
+                    app:layout_constraintTop_toBottomOf="@+id/i_search_result_fl_image"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"/>
 

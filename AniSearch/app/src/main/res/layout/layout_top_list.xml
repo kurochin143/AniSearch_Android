@@ -6,7 +6,7 @@
         xmlns:tools="http://schemas.android.com/tools">
 
     <android.support.v7.widget.RecyclerView
-            android:id="@+id/top_list_recycler"
+            android:id="@+id/a_top_list_r"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layoutManager="android.support.v7.widget.GridLayoutManager"
