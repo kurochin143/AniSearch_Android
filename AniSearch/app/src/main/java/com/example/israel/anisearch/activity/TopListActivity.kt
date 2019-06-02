@@ -49,11 +49,11 @@ class TopListActivity : AppCompatActivity() {
         topViewModel = ViewModelProviders.of(this, topVMFactory).get(TopViewModel::class.java)
 
         topViewModel.getTopListLiveData().observe(this, Observer {
+            a_top_list_cl_requesting.visibility = View.GONE
+
             if (it != null) {
                 topListAdapter.setTopList(it.topList)
             }
-
-            a_top_list_cl_requesting.visibility = View.GONE
         })
 
         // spinner
@@ -69,7 +69,7 @@ class TopListActivity : AppCompatActivity() {
                     AniListType.ANIME -> topViewModel.getTopAnime(1, PER_PAGE)
                     AniListType.MANGA -> topViewModel.getTopManga(1, PER_PAGE)
                     AniListType.CHARACTER -> topViewModel.getTopCharacters(1, PER_PAGE)
-                    AniListType.STAFF -> {} // TODO
+                    AniListType.STAFF -> topViewModel.getTopStaffs(1, PER_PAGE)
                 }
 
                 a_top_list_cl_requesting.visibility = View.VISIBLE

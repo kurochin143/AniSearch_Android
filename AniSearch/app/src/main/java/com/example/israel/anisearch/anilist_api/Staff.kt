@@ -71,7 +71,7 @@ class Staff {
         fun createGraphQLObject(sort: String, search: String?): GraphQLObject {
             return GraphQLObject("staff").also {
                 it.addParam("sort", sort)
-                if (search != null) it.addParam("search", search)
+                if (search != null) it.addParam("search", "\"$search\"")
 
                 it.addField("id")
                 it.addObject(Name.createGraphQLObject())

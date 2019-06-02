@@ -12,7 +12,9 @@ import android.view.ViewGroup
 import com.example.israel.anisearch.R
 import com.example.israel.anisearch.adapter.SearchResultsAdapter
 import com.example.israel.anisearch.anilist_api.statics.AniListType
+import com.example.israel.anisearch.anilist_api.statics.CharacterSearchSort
 import com.example.israel.anisearch.anilist_api.statics.MediaSearchSort
+import com.example.israel.anisearch.anilist_api.statics.StaffSearchSort
 import com.example.israel.anisearch.app.AniSearchApp
 import com.example.israel.anisearch.view_model.SearchViewModel
 import com.example.israel.anisearch.view_model.factory.SearchVMFactory
@@ -28,7 +30,7 @@ class SearchResultsFragment : Fragment() {
     @Inject
     lateinit var searchResultVMFactory: SearchVMFactory
 
-    lateinit var searchViewModel: SearchViewModel
+    private lateinit var searchViewModel: SearchViewModel
 
     companion object {
         private const val SPAN_COUNT = 3
@@ -79,6 +81,8 @@ class SearchResultsFragment : Fragment() {
 
         // live data
         searchViewModel.getSearchResultsLiveData().observe(this, Observer {
+            f_search_results_pb_requesting.visibility = View.GONE
+
             if (it == null) {
                 return@Observer
             }
@@ -88,8 +92,6 @@ class SearchResultsFragment : Fragment() {
             } else {
                 searchResultsAdapter!!.addSearchResults(it)
             }
-
-            f_search_results_pb_requesting.visibility = View.GONE
         })
 
         // page 1 search
@@ -100,6 +102,8 @@ class SearchResultsFragment : Fragment() {
         when (type) {
             AniListType.ANIME -> searchViewModel.searchAnime(page, PER_PAGE, query, MediaSearchSort.SEARCH_MATCH)
             AniListType.MANGA -> searchViewModel.searchManga(page, PER_PAGE, query, MediaSearchSort.SEARCH_MATCH)
+            AniListType.CHARACTER -> searchViewModel.searchCharacter(page, PER_PAGE, query, CharacterSearchSort.SEARCH_MATCH)
+            AniListType.STAFF -> searchViewModel.searchStaff(page, PER_PAGE, query, StaffSearchSort.SEARCH_MATCH)
         }
     }
 

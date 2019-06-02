@@ -8,23 +8,6 @@ import com.example.israel.anisearch.graphql.GraphQLQueryBuilder
 import io.reactivex.Observable
 
 class AniListApiDao(private var apiService: ApiService) {
-
-    fun getTopAnime(page: Int, perPage: Int): Observable<AnimeSearchResult?> {
-        return searchAnime(page, perPage, null, MediaSearchSort.SCORE_DESC)
-    }
-
-    fun getTopManga(page: Int, perPage: Int): Observable<MangaSearchResult?> {
-        return searchManga(page, perPage, null, MediaSearchSort.SCORE_DESC)
-    }
-
-    fun getTopCharacters(page: Int, perPage: Int): Observable<CharacterSearchResult?> {
-        return searchCharacter(page, perPage, null, CharacterSearchSort.FAVOURITES_DESC)
-    }
-
-    fun getTopStaffs(page: Int, perPage: Int): Observable<StaffSearchResult?> {
-        return searchStaff(page, perPage, null, StaffSearchSort.FAVOURITES_DESC)
-    }
-
     fun searchAnime(page: Int, perPage: Int, search: String?, sort: String): Observable<AnimeSearchResult?> {
         // "{Page(page: $page, perPage: $perPage) {media(search: \"$query\", type: ANIME, sort: $sort, isAdult: false) {id title{romaji english native userPreferred} description coverImage{large medium} bannerImage}}}"
         val queryBuilder = GraphQLQueryBuilder().addObject(
@@ -55,6 +38,7 @@ class AniListApiDao(private var apiService: ApiService) {
             TPage.createGraphQLObject(page, perPage)
                 .addObject(Staff.createGraphQLObject(sort, search))
         )
+        val str = queryBuilder.build()
         return apiService.searchStaff(GraphQLQuery(queryBuilder.build()))
     }
 
