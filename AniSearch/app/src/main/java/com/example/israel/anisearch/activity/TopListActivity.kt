@@ -11,6 +11,8 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import com.bumptech.glide.Glide
+import com.bumptech.glide.MemoryCategory
 import com.example.israel.anisearch.R
 import com.example.israel.anisearch.adapter.TopListAdapter
 import com.example.israel.anisearch.anilist_api.statics.AniListType
@@ -39,6 +41,9 @@ class TopListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_top_list)
+
+        // Glide memory high
+        Glide.get(this).setMemoryCategory(MemoryCategory.HIGH)
 
         // setup recycler view
         a_top_list_r.setHasFixedSize(true)
@@ -112,5 +117,10 @@ class TopListActivity : AppCompatActivity() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
 
+        // Glide memory normal
+        Glide.get(this).setMemoryCategory(MemoryCategory.NORMAL)
+    }
 }
