@@ -3,8 +3,10 @@ package com.example.israel.anisearch.activity
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
+import android.graphics.Bitmap
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.widget.AdapterView
@@ -13,6 +15,8 @@ import com.example.israel.anisearch.R
 import com.example.israel.anisearch.adapter.TopListAdapter
 import com.example.israel.anisearch.anilist_api.statics.AniListType
 import com.example.israel.anisearch.app.AniSearchApp
+import com.example.israel.anisearch.fragment.AnimeDetailsFragment
+import com.example.israel.anisearch.model.Top
 import com.example.israel.anisearch.view_model.TopViewModel
 import com.example.israel.anisearch.view_model.factory.TopVMFactory
 import kotlinx.android.synthetic.main.activity_top_list.*
@@ -41,7 +45,22 @@ class TopListActivity : AppCompatActivity() {
 
         a_top_list_r.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
-        topListAdapter = TopListAdapter()
+        topListAdapter = TopListAdapter(object: TopListAdapter.OnItemClickedListener {
+            override fun onItemClicked(top: Top, image: Bitmap?) {
+                // TODO if image is valid do shared transition
+
+                val fragment: Fragment?
+                when (top.type) {
+                    AniListType.ANIME -> fragment = AnimeDetailsFragment.newInstance(top.id, image)
+                    else -> return
+                }
+
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.a_top_list_fl_root, fragment)
+                    .addToBackStack(null)
+                    .commit()
+            }
+        })
         a_top_list_r.adapter = topListAdapter
 
         // top view model
@@ -91,7 +110,6 @@ class TopListActivity : AppCompatActivity() {
             val intent = Intent(this, SearchActivity::class.java)
             startActivity(intent)
         }
-
     }
 
 

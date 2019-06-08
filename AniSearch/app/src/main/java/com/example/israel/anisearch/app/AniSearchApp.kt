@@ -3,6 +3,7 @@ package com.example.israel.anisearch.app
 import android.app.Application
 import com.example.israel.anisearch.di.component.DaggerMainComponent
 import com.example.israel.anisearch.di.component.MainComponent
+import com.example.israel.anisearch.di.module.AnimeDetailsModule
 import com.example.israel.anisearch.di.module.SearchModule
 import com.example.israel.anisearch.di.module.TopModule
 
@@ -19,5 +20,7 @@ class AniSearchApp : Application() {
     fun getTopComponent() = aniSearchMainComponent.plus(TopModule())
 
     fun getSearchComponent() = aniSearchMainComponent.plus(SearchModule())
+
+    fun getAnimeDetailsComponent() = aniSearchMainComponent.plus(AnimeDetailsModule())
 
 }

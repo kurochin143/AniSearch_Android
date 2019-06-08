@@ -19,7 +19,7 @@ import okhttp3.Response
 import java.io.BufferedInputStream
 import java.io.IOException
 
-class TopListAdapter : RecyclerView.Adapter<TopListAdapter.ViewHolder>() {
+class TopListAdapter(private val onItemClickedListener: OnItemClickedListener) : RecyclerView.Adapter<TopListAdapter.ViewHolder>() {
     private var topList: MutableList<Top> = ArrayList()
     private var imageCaches: MutableList<Pair<String?, Bitmap?>?> = ArrayList()
     private var isRequestingImages: MutableList<Boolean> = ArrayList()
@@ -41,7 +41,7 @@ class TopListAdapter : RecyclerView.Adapter<TopListAdapter.ViewHolder>() {
 
         viewHolder.titleTextView.text = top.name
 
-        var imageUrl: String? = top.imageUrl
+        val imageUrl: String? = top.imageUrl
         if (imageUrl != null) {
             val imageCache = imageCaches[viewHolder.adapterPosition]
             if (imageCache == null) { // image has not been cached yet
@@ -118,6 +118,14 @@ class TopListAdapter : RecyclerView.Adapter<TopListAdapter.ViewHolder>() {
             viewHolder.requestingImageProgressBar.visibility = View.INVISIBLE
             viewHolder.imageImageView.setImageBitmap(null)
         }
+
+        viewHolder.itemView.setOnClickListener {
+            onItemClickedListener.onItemClicked(top, imageCaches[viewHolder.adapterPosition]?.second)
+        }
+    }
+
+    override fun onViewDetachedFromWindow(holder: ViewHolder) {
+        super.onViewDetachedFromWindow(holder)
     }
 
     fun setTopList(topList: MutableList<Top>) {
@@ -138,5 +146,7 @@ class TopListAdapter : RecyclerView.Adapter<TopListAdapter.ViewHolder>() {
         val requestingImageProgressBar: ProgressBar = itemView.findViewById(R.id.item_top_progress_bar_requesting_image)
     }
 
-    // create view holder for each type
+    interface OnItemClickedListener {
+        fun onItemClicked(top: Top, image: Bitmap?)
+    }
 }

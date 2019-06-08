@@ -13,7 +13,7 @@ class GraphQLQueryBuilder {
 
     fun build(): String {
         buildString {
-            append("{")
+            append("query {")
 
             graphQLObjects.forEach {
                 append(it.toString())

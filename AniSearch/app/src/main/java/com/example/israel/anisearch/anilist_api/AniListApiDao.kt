@@ -1,8 +1,5 @@
 package com.example.israel.anisearch.anilist_api
 
-import com.example.israel.anisearch.anilist_api.statics.CharacterSearchSort
-import com.example.israel.anisearch.anilist_api.statics.MediaSearchSort
-import com.example.israel.anisearch.anilist_api.statics.StaffSearchSort
 import com.example.israel.anisearch.graphql.GraphQLQuery
 import com.example.israel.anisearch.graphql.GraphQLQueryBuilder
 import io.reactivex.Observable
@@ -12,7 +9,7 @@ class AniListApiDao(private var apiService: ApiService) {
         // "{Page(page: $page, perPage: $perPage) {media(search: \"$query\", type: ANIME, sort: $sort, isAdult: false) {id title{romaji english native userPreferred} description coverImage{large medium} bannerImage}}}"
         val queryBuilder = GraphQLQueryBuilder().addObject(
             TPage.createGraphQLObject(page, perPage)
-                .addObject(Anime.createGraphQLObject(sort, false, search))
+                .addObject(Anime.createSearchGraphQLObject(sort, false, search))
         )
         return apiService.searchAnime(GraphQLQuery(queryBuilder.build()))
     }
@@ -38,8 +35,14 @@ class AniListApiDao(private var apiService: ApiService) {
             TPage.createGraphQLObject(page, perPage)
                 .addObject(Staff.createGraphQLObject(sort, search))
         )
-        val str = queryBuilder.build()
         return apiService.searchStaff(GraphQLQuery(queryBuilder.build()))
+    }
+
+    fun getAnimeDetails(id: Int): Observable<AnimeDetailsResult?> {
+        val queryBuilder = GraphQLQueryBuilder()
+            .addObject(Anime.createDetailsGraphQLObject(id, false))
+
+        return apiService.getAnimeDetails(GraphQLQuery(queryBuilder.build()))
     }
 
 }

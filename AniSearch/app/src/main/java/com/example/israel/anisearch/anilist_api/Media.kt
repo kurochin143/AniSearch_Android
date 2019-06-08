@@ -69,11 +69,10 @@ abstract class Media {
     }
 
     companion object {
-        /** object for media search*/
-        fun createGraphQLObject(type: String, sort: String, isAdult: Boolean, search: String?): GraphQLObject {
+        fun createSearchGraphQLObject(type: String, sort: String?, isAdult: Boolean, search: String?): GraphQLObject {
             return GraphQLObject("media").also {
                 it.addParam("type", type)
-                it.addParam("sort", sort)
+                if (sort != null) it.addParam("sort", sort)
                 it.addParam("isAdult", isAdult.toString())
                 if (search != null) it.addParam("search", "\"$search\"")
 
@@ -84,9 +83,17 @@ abstract class Media {
             }
         }
 
-        /** object for media get by id*/
-        fun createGraphQLObject() {
-            // TODO
+        fun createDetailsGraphQLObject(id: Int, type: String, isAdult: Boolean): GraphQLObject {
+            return GraphQLObject("Media").also {
+                it.addParam("id", id.toString())
+                it.addParam("type", type)
+                it.addParam("isAdult", isAdult.toString())
+
+                it.addField("id")
+                it.addField("type")
+                it.addObject(Title.createGraphQLObject())
+                it.addObject(CoverImage.createGraphQLObject())
+            }
         }
     }
 }

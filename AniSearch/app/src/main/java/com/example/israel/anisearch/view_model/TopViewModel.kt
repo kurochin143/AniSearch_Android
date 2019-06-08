@@ -30,7 +30,8 @@ class TopViewModel(private val aniSearchRepository: AniSearchRepository) : ViewM
 
                 val topList = ArrayList<Top>(animeList.size)
                 animeList.forEach { anime ->
-                    topList.add(Top(AniListType.ANIME, anime.id, anime.title?.english, anime.coverImage?.medium))
+                    val top = Top.fromAnime(anime) ?: return@forEach
+                    topList.add(top)
                 }
 
                 return@map TopList(AniListType.ANIME, topList)
@@ -52,7 +53,8 @@ class TopViewModel(private val aniSearchRepository: AniSearchRepository) : ViewM
 
                 val topList = ArrayList<Top>(mangaList.size)
                 mangaList.forEach { manga ->
-                    topList.add(Top(AniListType.MANGA, manga.id, manga.title?.english, manga.coverImage?.medium))
+                    val top = Top.fromManga(manga) ?: return@forEach
+                    topList.add(top)
                 }
 
                 return@map TopList(AniListType.MANGA, topList)
@@ -74,7 +76,8 @@ class TopViewModel(private val aniSearchRepository: AniSearchRepository) : ViewM
 
                 val topList = ArrayList<Top>(characters.size)
                 characters.forEach { character ->
-                    topList.add(Top(AniListType.CHARACTER, character.id, character.name?.getFullName(), character.image?.medium))
+                    val top = Top.fromCharacter(character) ?: return@forEach
+                    topList.add(top)
                 }
 
                 return@map TopList(AniListType.CHARACTER, topList)
@@ -96,7 +99,8 @@ class TopViewModel(private val aniSearchRepository: AniSearchRepository) : ViewM
 
                 val topList = ArrayList<Top>(staffs.size)
                 staffs.forEach {staff ->
-                    topList.add(Top(AniListType.STAFF, staff.id, staff.name?.getFullName(), staff.image?.medium))
+                    val top = Top.fromStaff(staff) ?: return@forEach
+                    topList.add(top)
                 }
 
                 return@map TopList(AniListType.STAFF, topList)

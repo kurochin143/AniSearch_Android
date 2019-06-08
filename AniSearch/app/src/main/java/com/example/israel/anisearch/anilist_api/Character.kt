@@ -31,12 +31,12 @@ class Character {
         @Expose
         var native: String? = null
 
-        fun getFullName(): String {
+        fun getFullName(): String? {
             if (first != null) {
                 return first + " " + (last?: "")
             }
 
-            return last?: ""
+            return last
         }
 
         companion object {

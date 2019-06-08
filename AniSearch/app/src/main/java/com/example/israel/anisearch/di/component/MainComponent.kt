@@ -10,5 +10,6 @@ interface MainComponent {
 
     fun plus(topModule: TopModule) : TopComponent
     fun plus(searchModule: SearchModule) : SearchComponent
+    fun plus(animeDetailsModule: AnimeDetailsModule) : AnimeDetailsComponent
 
 }

@@ -4,6 +4,7 @@ import com.example.israel.anisearch.anilist_api.*
 import io.reactivex.Observable
 
 class AniListRepository(private val aniListApiDao: AniListApiDao) : AniSearchRepository() {
+
     override fun searchAnime(page: Int, perPage: Int, search: String?, sort: String): Observable<AnimeSearchResult?> {
         return aniListApiDao.searchAnime(page, perPage, search, sort)
     }
@@ -18,6 +19,10 @@ class AniListRepository(private val aniListApiDao: AniListApiDao) : AniSearchRep
 
     override fun searchStaff(page: Int, perPage: Int, search: String?, sort: String): Observable<StaffSearchResult?> {
         return aniListApiDao.searchStaff(page, perPage, search, sort)
+    }
+
+    override fun getAnimeDetails(id: Int): Observable<AnimeDetailsResult?> {
+        return aniListApiDao.getAnimeDetails(id)
     }
 
 
