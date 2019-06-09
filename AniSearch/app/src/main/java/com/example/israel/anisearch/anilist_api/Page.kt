@@ -1,0 +1,30 @@
+package com.example.israel.anisearch.anilist_api
+
+import com.example.israel.anisearch.graphql.GraphQLObject
+import com.google.gson.annotations.Expose
+import com.google.gson.annotations.SerializedName
+
+abstract class Page {
+
+    @SerializedName("pageInfo")
+    @Expose
+    var pageInfo: PageInfo? = null
+
+    class PageInfo {
+        @SerializedName("currentPage")
+        @Expose
+        var currentPage: Int? = null
+
+        @SerializedName("lastPage")
+        @Expose
+        var lastPage: Int? = null
+
+        companion object {
+            fun createGraphQLObject(): GraphQLObject {
+                return GraphQLObject("pageInfo")
+                    .addField("currentPage")
+                    .addField("lastPage")
+            }
+        }
+    }
+}
