@@ -77,7 +77,7 @@ class TopListAdapter(private val onItemClickedListener: OnItemClickedListener) :
 
         viewHolder.itemView.setOnClickListener {
             val drawable = viewHolder.imageImageView.drawable
-            var image: Bitmap?
+            val image: Bitmap?
             if (drawable is BitmapDrawable) {
                 image = drawable.bitmap
             } else {

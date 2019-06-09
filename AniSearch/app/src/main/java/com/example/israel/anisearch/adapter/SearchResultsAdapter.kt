@@ -2,6 +2,7 @@ package com.example.israel.anisearch.adapter
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.drawable.Drawable
 import android.os.Handler
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -10,6 +11,12 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.example.israel.anisearch.R
 import com.example.israel.anisearch.anilist_api.statics.AniListType
 import com.example.israel.anisearch.model.SearchResults
@@ -26,8 +33,6 @@ class SearchResultsAdapter(private var onLoadNextPageListener: OnLoadNextPageLis
     }
 
     private var searchResults: SearchResults = SearchResults(AniListType.ANIME, ArrayList(), 0, 0)
-    private var imageCaches: ArrayList<Pair<String?, Bitmap?>?> = ArrayList()
-    private var isRequestingImages: ArrayList<Boolean> = ArrayList()
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): RecyclerView.ViewHolder {
         return when(p1) {
@@ -46,81 +51,37 @@ class SearchResultsAdapter(private var onLoadNextPageListener: OnLoadNextPageLis
 
             viewHolder.titleTextView.text = searchResult.name
 
-            var imageUrl: String? = searchResult.imageUrl
-            if (imageUrl != null) {
-                val imageCache = imageCaches[viewHolder.adapterPosition]
-                if (imageCache == null) { // image has not been cached yet
+            if (searchResult.imageUrl != null) {
+                viewHolder.requestingImageProgressBar.visibility = View.VISIBLE
 
-                    viewHolder.imageImageView.setImageBitmap(null)
-                    viewHolder.requestingImageProgressBar.visibility = View.VISIBLE
-
-                    if (!isRequestingImages[viewHolder.adapterPosition]) { // not already requesting
-                        // download the image
-                        isRequestingImages[viewHolder.adapterPosition] = true
-
-                        val uiHandler = Handler(viewHolder.itemView.context.mainLooper)
-
-                        // preserve value
-                        val positionT = viewHolder.adapterPosition
-
-                        val onRequestImageFinished = fun(call: Call, response: Response?) {
-                            if (call.isCanceled) {
-                                return
-                            }
-
-                            if (response != null && response.isSuccessful && response.body() != null) {
-                                val bufferedInputStream = BufferedInputStream(response.body()!!.byteStream())
-                                val downloadedImage = BitmapFactory.decodeStream(bufferedInputStream)
-                                bufferedInputStream.close()
-
-                                // do not cache if there is no image
-                                if (downloadedImage != null) {
-                                    uiHandler.post {
-                                        isRequestingImages[positionT] = false
-
-                                        imageCaches[positionT] = Pair(imageUrl, downloadedImage)
-
-                                        // set the image directly
-                                        if (viewHolder.adapterPosition == positionT) {
-                                            viewHolder.requestingImageProgressBar.visibility = View.INVISIBLE
-                                            viewHolder.imageImageView.setImageBitmap(downloadedImage)
-                                        }
-
-                                        //notifyItemChanged(positionT)
-                                    }
-
-                                    return // successful
-                                }
-                            }
-
-                            // failed
-                            uiHandler.post {
-                                isRequestingImages[positionT] = false
-
-
-                                if (viewHolder.adapterPosition == positionT) {
-                                    // @NOTE: this will request a download again
-                                    notifyItemChanged(positionT)
-                                }
-                            }
+                Glide
+                    .with(viewHolder.itemView.context)
+                    .load(searchResult.imageUrl)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .addListener(object: RequestListener<Drawable> {
+                        override fun onLoadFailed(
+                            e: GlideException?,
+                            model: Any?,
+                            target: Target<Drawable>?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            viewHolder.requestingImageProgressBar.visibility = View.INVISIBLE
+                            return false
                         }
 
-                        NetworkStatics.requestImage(imageUrl).enqueue(object: Callback{
-                            override fun onFailure(call: Call, e: IOException) {
-                                e.printStackTrace()
-                                onRequestImageFinished(call, null)
-                            }
+                        override fun onResourceReady(
+                            resource: Drawable?,
+                            model: Any?,
+                            target: Target<Drawable>?,
+                            dataSource: DataSource?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            viewHolder.requestingImageProgressBar.visibility = View.INVISIBLE
+                            return false
+                        }
 
-                            override fun onResponse(call: Call, response: Response) {
-                                onRequestImageFinished(call, response)
-                            }
-                        })
-                    }
-
-                } else { // has image cache
-                    viewHolder.requestingImageProgressBar.visibility = View.INVISIBLE
-                    viewHolder.imageImageView.setImageBitmap(imageCache.second)
-                }
+                    })
+                    .into(viewHolder.imageImageView)
 
             } else { // no image url
                 viewHolder.requestingImageProgressBar.visibility = View.INVISIBLE
@@ -145,12 +106,6 @@ class SearchResultsAdapter(private var onLoadNextPageListener: OnLoadNextPageLis
 
     fun setSearchResults(searchResults: SearchResults) {
         this.searchResults = searchResults
-        imageCaches = ArrayList(this.searchResults.searchResults.size)
-        isRequestingImages = ArrayList(this.searchResults.searchResults.size)
-        repeat(this.searchResults.searchResults.size) {
-            imageCaches.add(null)
-            isRequestingImages.add(false)
-        }
         notifyDataSetChanged()
     }
 
@@ -159,12 +114,6 @@ class SearchResultsAdapter(private var onLoadNextPageListener: OnLoadNextPageLis
         this.searchResults.currentPage = searchResults.currentPage
         this.searchResults.lastPage = searchResults.lastPage
         this.searchResults.searchResults.addAll(searchResults.searchResults)
-        imageCaches.ensureCapacity(imageCaches.size + searchResults.searchResults.size)
-        isRequestingImages.ensureCapacity(isRequestingImages.size + searchResults.searchResults.size)
-        repeat(this.searchResults.searchResults.size) {
-            imageCaches.add(null)
-            isRequestingImages.add(false)
-        }
         notifyItemRangeChanged(oldSize, searchResults.searchResults.size + 1)
     }
 

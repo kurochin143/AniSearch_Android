@@ -68,8 +68,10 @@ class TopListActivity : AppCompatActivity() {
         })
         a_top_list_r.adapter = topListAdapter
 
-        // top view model
+        // inject
         (application as AniSearchApp).getTopComponent().inject(this)
+
+        // top view model
         topViewModel = ViewModelProviders.of(this, topVMFactory).get(TopViewModel::class.java)
 
         topViewModel.getTopListLiveData().observe(this, Observer {
