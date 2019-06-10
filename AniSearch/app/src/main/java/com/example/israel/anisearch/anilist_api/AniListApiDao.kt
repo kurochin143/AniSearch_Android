@@ -1,5 +1,6 @@
 package com.example.israel.anisearch.anilist_api
 
+import com.example.israel.anisearch.anilist_api.details.AnimeDetails
 import com.example.israel.anisearch.graphql.GraphQLQuery
 import com.example.israel.anisearch.graphql.GraphQLQueryBuilder
 import io.reactivex.Observable
@@ -40,7 +41,7 @@ class AniListApiDao(private var apiService: ApiService) {
 
     fun getAnimeDetails(id: Int): Observable<AnimeDetailsResult?> {
         val queryBuilder = GraphQLQueryBuilder()
-            .addObject(Anime.createDetailsGraphQLObject(id, false))
+            .addObject(AnimeDetails.createDetailsGraphQLObject(id, false))
 
         return apiService.getAnimeDetails(GraphQLQuery(queryBuilder.build()))
     }

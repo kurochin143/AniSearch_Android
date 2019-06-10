@@ -1,11 +1,11 @@
-package com.example.israel.anisearch.anilist_api
+package com.example.israel.anisearch.anilist_api.details
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-class TMedia <T: Media> {
+class TMediaDetails <T: MediaDetails> {
 
     @SerializedName("Media")
     @Expose
-    val media: T? = null
+    var media: T? = null
 }

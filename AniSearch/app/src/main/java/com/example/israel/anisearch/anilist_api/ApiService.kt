@@ -1,5 +1,7 @@
 package com.example.israel.anisearch.anilist_api
 
+import com.example.israel.anisearch.anilist_api.details.AnimeDetails
+import com.example.israel.anisearch.anilist_api.details.TMediaDetails
 import com.example.israel.anisearch.graphql.GraphQLQuery
 import io.reactivex.Observable
 import retrofit2.http.Body
@@ -10,7 +12,7 @@ typealias MangaSearchResult = TData<TPage<TMediaList<Manga>>>
 typealias CharacterSearchResult = TData<TPage<Characters>>
 typealias StaffSearchResult = TData<TPage<Staffs>>
 
-typealias AnimeDetailsResult = TData<TMedia<Anime>>
+typealias AnimeDetailsResult = TData<TMediaDetails<AnimeDetails>>
 
 interface ApiService {
     @POST("/")

@@ -65,8 +65,8 @@ class AnimeDetailsFragment : Fragment() {
         f_anime_details_i_image.setImageBitmap(image)
 
         animeDetailsViewModel.getAnimeDetailsLiveData().observe(this, Observer {
-            val anime = it ?: return@Observer
-            val title = anime.title?.english ?: "NO_TITLE"
+            val animeDetails = it ?: return@Observer
+            val title = animeDetails.title?.english ?: "NO_TITLE"
 
             f_anime_details_t_name_english.text = title
         })
