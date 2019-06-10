@@ -17,10 +17,7 @@ class AnimeDetailsViewModel(private val aniSearchRepository: AniSearchRepository
     fun getAnimeDetails(id: Int) {
         getAnimeDetailsDisposable = aniSearchRepository.getAnimeDetails(id).subscribe(
             {
-                val anime = it?.data?.media ?: return@subscribe
-                anime.id ?: return@subscribe
-
-                animeDetailsLiveData.postValue(anime)
+                animeDetailsLiveData.postValue(it?.data?.media)
             },
             {
                 animeDetailsLiveData.postValue(null)

@@ -24,25 +24,25 @@
                     app:layout_constraintTop_toTopOf="parent">
 
                 <ImageView
-                        android:id="@+id/item_search_result_image_image"
+                        android:id="@+id/i_search_result_i_image"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:scaleType="fitXY"
                         android:src="@drawable/fma"/>
 
                 <ProgressBar
-                        android:id="@+id/item_search_result_progress_bar_requesting_image"
+                        android:id="@+id/i_search_result_pb_requesting_image"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"/>
 
             </FrameLayout>
 
             <TextView
-                    android:id="@+id/item_search_result_text_title"
+                    android:id="@+id/i_search_result_t_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="3dp"
-                    android:text="Title long title very long title overflow title"
+                    android:text="Name long Name very long Name overflow Name"
                     android:textColor="@color/colorTextDark"
                     android:maxLines="2"
                     android:minLines="2"

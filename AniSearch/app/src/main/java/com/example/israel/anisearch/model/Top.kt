@@ -17,28 +17,48 @@ class Top(
 
         fun fromAnime(anime: Anime): Top? {
             val id = anime.id ?: return null
-            val name = anime.title?.english ?: NO_NAME
+            val title = anime.title
+            val name = if (title == null) {
+                NO_NAME
+            } else {
+                title.english ?: title.romaji ?: title.native ?: NO_NAME
+            }
 
             return Top(AniListType.ANIME, id, name, anime.coverImage?.medium)
         }
 
         fun fromManga(manga: Manga): Top? {
             val id = manga.id ?: return null
-            val name = manga.title?.english ?: NO_NAME
+            val title = manga.title
+            val name = if (title == null) {
+                NO_NAME
+            } else {
+                title.english ?: title.romaji ?: title.native ?: NO_NAME
+            }
 
             return Top(AniListType.MANGA, id, name, manga.coverImage?.medium)
         }
 
         fun fromCharacter(character: Character): Top? {
             val id = character.id ?: return null
-            val name = character.name?.getFullName() ?: NO_NAME
+            val characterName = character.name
+            val name = if (characterName == null) {
+                NO_NAME
+            } else {
+                characterName.getFullName() ?: characterName.native ?: NO_NAME
+            }
 
             return Top(AniListType.CHARACTER, id, name, character.image?.medium)
         }
 
         fun fromStaff(staff: Staff): Top? {
             val id = staff.id ?: return null
-            val name = staff.name?.getFullName() ?: NO_NAME
+            val staffName = staff.name
+            val name = if (staffName == null) {
+                NO_NAME
+            } else {
+                staffName.getFullName() ?: staffName.native ?: NO_NAME
+            }
 
             return Top(AniListType.STAFF, id, name, staff.image?.medium)
         }

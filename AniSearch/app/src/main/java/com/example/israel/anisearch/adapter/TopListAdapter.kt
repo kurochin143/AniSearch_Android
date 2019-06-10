@@ -7,9 +7,6 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -18,13 +15,13 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.example.israel.anisearch.R
 import com.example.israel.anisearch.model.Top
+import kotlinx.android.synthetic.main.item_top.view.*
 
 class TopListAdapter(private val onItemClickedListener: OnItemClickedListener) : RecyclerView.Adapter<TopListAdapter.ViewHolder>() {
     private var topList: MutableList<Top> = ArrayList()
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): ViewHolder {
-        val viewHolder = ViewHolder(LayoutInflater.from(p0.context).inflate(R.layout.item_top, p0, false))
-        return viewHolder
+        return ViewHolder(LayoutInflater.from(p0.context).inflate(R.layout.item_top, p0, false))
     }
 
     override fun getItemCount(): Int {
@@ -33,59 +30,7 @@ class TopListAdapter(private val onItemClickedListener: OnItemClickedListener) :
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         val top = topList[position]
-
-        val rankStr = "# ${position + 1}"
-        viewHolder.rankTextView.text = rankStr
-
-        viewHolder.titleTextView.text = top.name
-        if (top.imageUrl != null) {
-            viewHolder.requestingImageProgressBar.visibility = View.VISIBLE
-
-            Glide
-                .with(viewHolder.itemView.context)
-                .load(top.imageUrl)
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .addListener(object: RequestListener<Drawable> {
-                    override fun onLoadFailed(
-                        e: GlideException?,
-                        model: Any?,
-                        target: Target<Drawable>?,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        viewHolder.requestingImageProgressBar.visibility = View.INVISIBLE
-                        return false
-                    }
-
-                    override fun onResourceReady(
-                        resource: Drawable?,
-                        model: Any?,
-                        target: Target<Drawable>?,
-                        dataSource: DataSource?,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        viewHolder.requestingImageProgressBar.visibility = View.INVISIBLE
-                        return false
-                    }
-
-                })
-                .into(viewHolder.imageImageView)
-
-        } else { // no image url
-            viewHolder.requestingImageProgressBar.visibility = View.INVISIBLE
-            viewHolder.imageImageView.setImageBitmap(null)
-        }
-
-        viewHolder.itemView.setOnClickListener {
-            val drawable = viewHolder.imageImageView.drawable
-            val image: Bitmap?
-            if (drawable is BitmapDrawable) {
-                image = drawable.bitmap
-            } else {
-                image = null
-            }
-
-            onItemClickedListener.onItemClicked(top, image)
-        }
+        viewHolder.bind(top, onItemClickedListener)
     }
 
     override fun onViewDetachedFromWindow(holder: ViewHolder) {
@@ -98,10 +43,61 @@ class TopListAdapter(private val onItemClickedListener: OnItemClickedListener) :
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val rankTextView: TextView = itemView.findViewById(R.id.item_top_text_rank)
-        val titleTextView: TextView = itemView.findViewById(R.id.item_top_text_title)
-        val imageImageView: ImageView = itemView.findViewById(R.id.item_top_image_image)
-        val requestingImageProgressBar: ProgressBar = itemView.findViewById(R.id.item_top_progress_bar_requesting_image)
+        fun bind(top: Top, onItemClickedListener: OnItemClickedListener) {
+
+            val rankStr = "# ${adapterPosition + 1}"
+            itemView.i_top_t_rank.text = rankStr
+
+            itemView.i_top_t_name.text = top.name
+            if (top.imageUrl != null) {
+                itemView.i_top_pb_requesting_image.visibility = View.VISIBLE
+
+                Glide
+                    .with(itemView.context)
+                    .load(top.imageUrl)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .addListener(object: RequestListener<Drawable> {
+                        override fun onLoadFailed(
+                            e: GlideException?,
+                            model: Any?,
+                            target: Target<Drawable>?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            itemView.i_top_pb_requesting_image.visibility = View.INVISIBLE
+                            return false
+                        }
+
+                        override fun onResourceReady(
+                            resource: Drawable?,
+                            model: Any?,
+                            target: Target<Drawable>?,
+                            dataSource: DataSource?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            itemView.i_top_pb_requesting_image.visibility = View.INVISIBLE
+                            return false
+                        }
+
+                    })
+                    .into(itemView.i_top_i_image)
+
+            } else { // no image url
+                itemView.i_top_pb_requesting_image.visibility = View.INVISIBLE
+                itemView.i_top_i_image.setImageBitmap(null)
+            }
+
+            itemView.setOnClickListener {
+                val drawable = itemView.i_top_i_image.drawable
+                val image: Bitmap?
+                if (drawable is BitmapDrawable) {
+                    image = drawable.bitmap
+                } else {
+                    image = null
+                }
+
+                onItemClickedListener.onItemClicked(top, image)
+            }
+        }
     }
 
     interface OnItemClickedListener {

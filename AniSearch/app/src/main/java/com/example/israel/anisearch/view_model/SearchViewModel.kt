@@ -26,8 +26,11 @@ class SearchViewModel(private val aniSearchRepository: AniSearchRepository) : Vi
 
                 val searchResults = ArrayList<SearchResult>(animeList.size)
                 animeList.forEach { anime ->
-                    searchResults.add(SearchResult(AniListType.ANIME, anime.id, anime.title?.english, anime.coverImage?.medium))
+                    val searchResult = SearchResult.fromAnime(anime) ?: return@forEach
+
+                    searchResults.add(searchResult)
                 }
+                searchResults.trimToSize()
 
                 return@map SearchResults(
                     AniListType.ANIME,
@@ -55,8 +58,11 @@ class SearchViewModel(private val aniSearchRepository: AniSearchRepository) : Vi
 
                 val searchResults = ArrayList<SearchResult>(mangaList.size)
                 mangaList.forEach { manga ->
-                    searchResults.add(SearchResult(AniListType.MANGA, manga.id, manga.title?.english, manga.coverImage?.medium))
+                    val searchResult = SearchResult.fromManga(manga) ?: return@forEach
+
+                    searchResults.add(searchResult)
                 }
+                searchResults.trimToSize()
 
                 return@map SearchResults(
                     AniListType.MANGA,
@@ -83,8 +89,11 @@ class SearchViewModel(private val aniSearchRepository: AniSearchRepository) : Vi
 
                 val searchResults = ArrayList<SearchResult>(characters.size)
                 characters.forEach { character ->
-                    searchResults.add(SearchResult(AniListType.CHARACTER, character.id, character.name?.getFullName(), character.image?.medium))
+                    val searchResult = SearchResult.fromCharacter(character) ?: return@forEach
+
+                    searchResults.add(searchResult)
                 }
+                searchResults.trimToSize()
 
                 return@map SearchResults(
                     AniListType.CHARACTER,
@@ -111,8 +120,11 @@ class SearchViewModel(private val aniSearchRepository: AniSearchRepository) : Vi
 
                 val searchResults = ArrayList<SearchResult>(staffs.size)
                 staffs.forEach { staff ->
-                    searchResults.add(SearchResult(AniListType.STAFF, staff.id, staff.name?.getFullName(), staff.image?.medium))
+                    val searchResult = SearchResult.fromStaff(staff) ?: return@forEach
+
+                    searchResults.add(searchResult)
                 }
+                searchResults.trimToSize()
 
                 return@map SearchResults(
                     AniListType.STAFF,
