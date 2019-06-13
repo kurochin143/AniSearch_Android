@@ -10,7 +10,7 @@ class AniListApiDao(private var apiService: ApiService) {
         // "{Page(page: $page, perPage: $perPage) {media(search: \"$query\", type: ANIME, sort: $sort, isAdult: false) {id title{romaji english native userPreferred} description coverImage{large medium} bannerImage}}}"
         val queryBuilder = GraphQLQueryBuilder().addObject(
             TPage.createGraphQLObject(page, perPage)
-                .addObject(Anime.createSearchGraphQLObject(sort, false, search))
+                .addObject(Anime.createGraphQLObject(sort, false, search))
         )
         return apiService.searchAnime(GraphQLQuery(queryBuilder.build()))
     }
@@ -41,7 +41,7 @@ class AniListApiDao(private var apiService: ApiService) {
 
     fun getAnimeDetails(id: Int): Observable<AnimeDetailsResult?> {
         val queryBuilder = GraphQLQueryBuilder()
-            .addObject(AnimeDetails.createDetailsGraphQLObject(id, false))
+            .addObject(AnimeDetails.createGraphQLObject(id, false))
 
         return apiService.getAnimeDetails(GraphQLQuery(queryBuilder.build()))
     }

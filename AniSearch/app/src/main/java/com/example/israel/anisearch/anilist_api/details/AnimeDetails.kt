@@ -4,8 +4,8 @@ import com.example.israel.anisearch.graphql.GraphQLObject
 
 class AnimeDetails : MediaDetails() {
     companion object {
-        fun createDetailsGraphQLObject(id: Int, isAdult: Boolean): GraphQLObject {
-            return createDetailsGraphQLObject(id,"ANIME", isAdult)
+        fun createGraphQLObject(id: Int, isAdult: Boolean): GraphQLObject {
+            return createGraphQLObject(id,"ANIME", isAdult)
         }
     }
 }

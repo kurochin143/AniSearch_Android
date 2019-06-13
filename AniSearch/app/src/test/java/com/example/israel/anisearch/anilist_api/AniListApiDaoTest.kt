@@ -11,7 +11,7 @@ class AniListApiDaoTest {
 
         val queryBuiltStr = GraphQLQueryBuilder().also {
             it.addObject(TPage.createGraphQLObject(1, 1)
-                .addObject(Anime.createSearchGraphQLObject("SEARCH_MATCH", false, "hehe")))
+                .addObject(Anime.createGraphQLObject("SEARCH_MATCH", false, "hehe")))
         }.build()
 
 

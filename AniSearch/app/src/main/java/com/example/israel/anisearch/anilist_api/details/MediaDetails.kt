@@ -69,7 +69,7 @@ abstract class MediaDetails {
     }
 
     companion object {
-        fun createDetailsGraphQLObject(id: Int, type: String, isAdult: Boolean): GraphQLObject {
+        fun createGraphQLObject(id: Int, type: String, isAdult: Boolean): GraphQLObject {
             return GraphQLObject("Media").also {
                 it.addParam("id", id.toString())
                 it.addParam("type", type)
