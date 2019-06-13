@@ -1,7 +1,5 @@
 package com.example.israel.anisearch.anilist_api
 
-import com.example.israel.anisearch.anilist_api.details.AnimeDetails
-import com.example.israel.anisearch.anilist_api.details.TMediaDetails
 import com.example.israel.anisearch.graphql.GraphQLQuery
 import io.reactivex.Observable
 import retrofit2.http.Body
@@ -12,22 +10,22 @@ typealias MangaSearchResult = TData<TPage<TMediaList<Manga>>>
 typealias CharacterSearchResult = TData<TPage<Characters>>
 typealias StaffSearchResult = TData<TPage<Staffs>>
 
-typealias AnimeDetailsResult = TData<TMediaDetails<AnimeDetails>>
+typealias AnimeDetailsResult = TData<TMedia<Anime>>
 
 interface ApiService {
     @POST("/")
-    fun searchAnime(@Body query: GraphQLQuery): Observable<AnimeSearchResult?>
+    fun searchAnime(@Body query: GraphQLQuery): Observable<AnimeSearchResult>
 
     @POST("/")
-    fun searchManga(@Body query: GraphQLQuery): Observable<MangaSearchResult?>
+    fun searchManga(@Body query: GraphQLQuery): Observable<MangaSearchResult>
 
     @POST("/")
-    fun searchCharacter(@Body query: GraphQLQuery): Observable<CharacterSearchResult?>
+    fun searchCharacter(@Body query: GraphQLQuery): Observable<CharacterSearchResult>
 
     @POST("/")
-    fun searchStaff(@Body query: GraphQLQuery): Observable<StaffSearchResult?>
+    fun searchStaff(@Body query: GraphQLQuery): Observable<StaffSearchResult>
 
     @POST("/")
-    fun getAnimeDetails(@Body query: GraphQLQuery): Observable<AnimeDetailsResult?>
+    fun getAnimeDetails(@Body query: GraphQLQuery): Observable<AnimeDetailsResult>
 
 }
