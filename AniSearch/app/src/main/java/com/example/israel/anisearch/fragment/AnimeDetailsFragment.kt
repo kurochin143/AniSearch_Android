@@ -51,24 +51,12 @@ class AnimeDetailsFragment : Fragment() {
             animeId = it.getInt(ARG_ANIME_ID)
             image = it.getParcelable(ARG_IMAGE)
         }
-    }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_anime_details, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
+        // inject
         (activity!!.application as AniSearchApp).getAnimeDetailsComponent().inject(this)
+
+        // view model
         animeDetailsViewModel = ViewModelProviders.of(this, animeDetailsVMFactory).get(AnimeDetailsViewModel::class.java)
-
-        f_anime_details_i_image.setImageBitmap(image)
-
         animeDetailsViewModel.getAnimeDetailsLiveData().observe(this, Observer {
             val animeDetails = it ?: return@Observer
             f_anime_details_t_name_english.text = animeDetails.title?.english ?: ""
@@ -90,6 +78,20 @@ class AnimeDetailsFragment : Fragment() {
             }
 
         })
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_anime_details, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        f_anime_details_i_image.setImageBitmap(image)
 
         animeDetailsViewModel.getErrorLiveData().observe(this, Observer {
             Toast.makeText(context, it!!.message, Toast.LENGTH_LONG).show()

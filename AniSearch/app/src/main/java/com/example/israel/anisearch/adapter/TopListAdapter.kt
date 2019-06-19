@@ -95,12 +95,12 @@ class TopListAdapter(private val onItemClickedListener: OnItemClickedListener) :
                     image = null
                 }
 
-                onItemClickedListener.onItemClicked(top, image)
+                onItemClickedListener.onItemClicked(it, top, image)
             }
         }
     }
 
     interface OnItemClickedListener {
-        fun onItemClicked(top: Top, image: Bitmap?)
+        fun onItemClicked(v: View, top: Top, image: Bitmap?)
     }
 }

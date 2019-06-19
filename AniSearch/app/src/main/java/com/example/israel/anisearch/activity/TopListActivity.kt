@@ -51,12 +51,11 @@ class TopListActivity : AppCompatActivity() {
         a_top_list_r.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
         topListAdapter = TopListAdapter(object: TopListAdapter.OnItemClickedListener {
-            override fun onItemClicked(top: Top, image: Bitmap?) {
+            override fun onItemClicked(v: View, top: Top, image: Bitmap?) {
                 // TODO if image is valid do shared transition
 
-                val fragment: Fragment?
-                when (top.type) {
-                    AniListType.ANIME -> fragment = AnimeDetailsFragment.newInstance(top.id, image)
+                val fragment: Fragment = when (top.type) {
+                    AniListType.ANIME -> AnimeDetailsFragment.newInstance(top.id, image)
                     else -> return
                 }
 

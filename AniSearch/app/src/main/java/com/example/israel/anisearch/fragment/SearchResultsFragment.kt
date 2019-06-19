@@ -53,33 +53,19 @@ class SearchResultsFragment : Fragment() {
             query = it.getString(ARG_QUERY)!!
             type = it.getString(ARG_TYPE)!!
         }
-    }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_search_results, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
+        // inject
         (activity!!.application as AniSearchApp).getSearchComponent().inject(this)
-        searchViewModel = ViewModelProviders.of(this, searchResultVMFactory).get(SearchViewModel::class.java)
 
-        // recycler view
-        f_search_results_r.setHasFixedSize(true)
-        f_search_results_r.layoutManager = GridLayoutManager(context, SPAN_COUNT)
+        // adapter
         searchResultsAdapter = SearchResultsAdapter(object: SearchResultsAdapter.OnLoadNextPageListener {
             override fun loadNextPage(page: Int) {
                 search(page)
             }
         })
-        f_search_results_r.adapter = searchResultsAdapter
 
-        // live data
+        // view model
+        searchViewModel = ViewModelProviders.of(this, searchResultVMFactory).get(SearchViewModel::class.java)
         searchViewModel.getSearchResultsLiveData().observe(this, Observer {
             f_search_results_pb_requesting.visibility = View.GONE
 
@@ -93,6 +79,24 @@ class SearchResultsFragment : Fragment() {
                 searchResultsAdapter!!.addSearchResults(it)
             }
         })
+
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_search_results, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // recycler view
+        f_search_results_r.setHasFixedSize(true)
+        f_search_results_r.layoutManager = GridLayoutManager(context, SPAN_COUNT)
+        f_search_results_r.adapter = searchResultsAdapter
 
         // page 1 search
         search(1)
