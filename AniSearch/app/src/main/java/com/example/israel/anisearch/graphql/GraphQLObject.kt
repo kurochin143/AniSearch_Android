@@ -43,19 +43,21 @@ class GraphQLObject {
             append(')')
         }
 
-        append('{')
+        if (fields.size != 0 || objects.size != 0) {
+            append('{')
 
-        fields.forEach {
-            append(it)
-            append(" ")
+            fields.forEach {
+                append(it)
+                append(" ")
+            }
+
+            objects.forEach {
+                append(it.toString())
+                append(" ")
+            }
+
+            append('}')
         }
-
-        objects.forEach {
-            append(it.toString())
-            append(" ")
-        }
-
-        append('}')
 
         return toString()
     }

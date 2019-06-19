@@ -9,12 +9,17 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.GridLayout
+import android.widget.TextView
+import android.widget.Toast
 
 import com.example.israel.anisearch.R
+import com.example.israel.anisearch.anilist_api.Character
 import com.example.israel.anisearch.app.AniSearchApp
 import com.example.israel.anisearch.view_model.AnimeDetailsViewModel
 import com.example.israel.anisearch.view_model.factory.AnimeDetailsVMFactory
 import kotlinx.android.synthetic.main.fragment_anime_details.*
+import kotlinx.android.synthetic.main.item_anime_details_genre.view.*
 import javax.inject.Inject
 
 class AnimeDetailsFragment : Fragment() {
@@ -66,9 +71,28 @@ class AnimeDetailsFragment : Fragment() {
 
         animeDetailsViewModel.getAnimeDetailsLiveData().observe(this, Observer {
             val animeDetails = it ?: return@Observer
-            val title = animeDetails.title?.english ?: "NO_TITLE"
+            f_anime_details_t_name_english.text = animeDetails.title?.english ?: ""
 
-            f_anime_details_t_name_english.text = title
+            f_anime_details_t_format.text =  animeDetails.format ?: ""
+            f_anime_details_t_status.text = animeDetails.status ?: ""
+            f_anime_details_t_description.text = animeDetails.description ?: ""
+            f_anime_details_t_start_date.text = animeDetails.startDate?.toString() ?: ""
+            f_anime_details_t_end_date.text = animeDetails.endDate?.toString() ?: ""
+            f_anime_details_t_episodes.text = animeDetails.episodes?.toString() ?: ""
+            val durationL = animeDetails.duration
+            f_anime_details_t_duration.text = if (durationL != null) durationL.toString() + "minutes" else ""
+
+            animeDetails.genres?.forEachIndexed { index, genre ->
+                val itemView = View.inflate(context, R.layout.item_anime_details_genre, null)
+                itemView.i_anime_details_t_genre.text = genre
+                f_anime_details_gl_genres.addView(itemView)
+                (itemView.layoutParams as GridLayout.LayoutParams).columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
+            }
+
+        })
+
+        animeDetailsViewModel.getErrorLiveData().observe(this, Observer {
+            Toast.makeText(context, it!!.message, Toast.LENGTH_LONG).show()
         })
 
         animeDetailsViewModel.getAnimeDetails(animeId)

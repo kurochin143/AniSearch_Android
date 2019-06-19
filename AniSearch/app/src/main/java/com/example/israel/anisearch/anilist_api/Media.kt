@@ -22,6 +22,34 @@ abstract class Media {
     @Expose
     var coverImage: CoverImage? = null
 
+    @SerializedName("format")
+    @Expose
+    var format: String? = null
+
+    @SerializedName("status")
+    @Expose
+    var status: String? = null
+
+    @SerializedName("description")
+    @Expose
+    var description: String? = null
+
+    @SerializedName("startDate")
+    @Expose
+    var startDate: FuzzyDate? = null
+
+    @SerializedName("endDate")
+    @Expose
+    var endDate: FuzzyDate? = null
+
+    @SerializedName("genres")
+    @Expose
+    var genres: MutableList<String>? = null
+
+    @SerializedName("averageScore")
+    @Expose
+    var averageScore: Int? = null
+
     class Title {
         @SerializedName("romaji")
         @Expose
@@ -93,6 +121,13 @@ abstract class Media {
                 it.addField("type")
                 it.addObject(Title.createGraphQLObject())
                 it.addObject(CoverImage.createGraphQLObject())
+                it.addField("format")
+                it.addField("status")
+                it.addObject(GraphQLObject("description").addParam("asHtml", "false"))
+                it.addObject(FuzzyDate.createGraphQLObject("startDate"))
+                it.addObject(FuzzyDate.createGraphQLObject("endDate"))
+                it.addField("genres")
+                it.addField("averageScore")
             }
         }
     }

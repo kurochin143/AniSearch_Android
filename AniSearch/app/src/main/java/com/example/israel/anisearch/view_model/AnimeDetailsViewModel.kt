@@ -11,8 +11,10 @@ class AnimeDetailsViewModel(private val aniSearchRepository: AniSearchRepository
 
     private var getAnimeDetailsDisposable: Disposable? = null
     private var animeDetailsLiveData = MutableLiveData<Anime?>()
+    private var errorLiveData = MutableLiveData<Throwable>()
 
     fun getAnimeDetailsLiveData(): LiveData<Anime?> = animeDetailsLiveData
+    fun getErrorLiveData(): LiveData<Throwable> = errorLiveData
 
     fun getAnimeDetails(id: Int) {
         getAnimeDetailsDisposable = aniSearchRepository.getAnimeDetails(id).subscribe(
@@ -20,7 +22,7 @@ class AnimeDetailsViewModel(private val aniSearchRepository: AniSearchRepository
                 animeDetailsLiveData.postValue(it?.data?.media)
             },
             {
-                animeDetailsLiveData.postValue(null)
+                errorLiveData.postValue(it)
             })
     }
 
