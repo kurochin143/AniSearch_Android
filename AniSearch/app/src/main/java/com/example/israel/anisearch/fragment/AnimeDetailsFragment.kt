@@ -24,8 +24,11 @@ import javax.inject.Inject
 
 class AnimeDetailsFragment : Fragment() {
 
+    private var isNew: Boolean = true
+
     private var animeId = 0
     private var image: Bitmap? = null
+    private var imageTransitionName: String? = null
 
     @Inject
     lateinit var animeDetailsVMFactory: AnimeDetailsVMFactory
@@ -34,13 +37,15 @@ class AnimeDetailsFragment : Fragment() {
     companion object {
         private const val ARG_ANIME_ID = "anime_id"
         private const val ARG_IMAGE = "image"
+        private const val ARG_IMAGE_TRANSITION_NAME = "image_transition_name"
 
         @JvmStatic
-        fun newInstance(animeId: Int, image: Bitmap?) =
+        fun newInstance(animeId: Int, image: Bitmap?, imageTransitionName: String?) =
             AnimeDetailsFragment().apply {
                 arguments = Bundle().apply {
                     putInt(ARG_ANIME_ID, animeId)
                     putParcelable(ARG_IMAGE, image)
+                    putString(ARG_IMAGE_TRANSITION_NAME, imageTransitionName)
                 }
             }
     }
@@ -50,6 +55,7 @@ class AnimeDetailsFragment : Fragment() {
         arguments?.let {
             animeId = it.getInt(ARG_ANIME_ID)
             image = it.getParcelable(ARG_IMAGE)
+            imageTransitionName = it.getString(ARG_IMAGE_TRANSITION_NAME)
         }
 
         // inject
@@ -57,11 +63,14 @@ class AnimeDetailsFragment : Fragment() {
 
         // view model
         animeDetailsViewModel = ViewModelProviders.of(this, animeDetailsVMFactory).get(AnimeDetailsViewModel::class.java)
+        animeDetailsViewModel.getErrorLiveData().observe(this, Observer {
+            Toast.makeText(context, it!!.message, Toast.LENGTH_LONG).show()
+        })
         animeDetailsViewModel.getAnimeDetailsLiveData().observe(this, Observer {
             val animeDetails = it ?: return@Observer
             f_anime_details_t_name_english.text = animeDetails.title?.english ?: ""
 
-            f_anime_details_t_format.text =  animeDetails.format ?: ""
+            f_anime_details_t_format.text = animeDetails.format ?: ""
             f_anime_details_t_status.text = animeDetails.status ?: ""
             f_anime_details_t_description.text = animeDetails.description ?: ""
             f_anime_details_t_start_date.text = animeDetails.startDate?.toString() ?: ""
@@ -70,13 +79,12 @@ class AnimeDetailsFragment : Fragment() {
             val durationL = animeDetails.duration
             f_anime_details_t_duration.text = if (durationL != null) durationL.toString() + "minutes" else ""
 
-            animeDetails.genres?.forEachIndexed { index, genre ->
+            animeDetails.genres?.forEach { genre ->
                 val itemView = View.inflate(context, R.layout.item_anime_details_genre, null)
                 itemView.i_anime_details_t_genre.text = genre
                 f_anime_details_gl_genres.addView(itemView)
                 (itemView.layoutParams as GridLayout.LayoutParams).columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
             }
-
         })
     }
 
@@ -91,13 +99,15 @@ class AnimeDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        f_anime_details_i_image.transitionName = imageTransitionName
+
         f_anime_details_i_image.setImageBitmap(image)
 
-        animeDetailsViewModel.getErrorLiveData().observe(this, Observer {
-            Toast.makeText(context, it!!.message, Toast.LENGTH_LONG).show()
-        })
+        if (isNew) {
+            isNew = false
 
-        animeDetailsViewModel.getAnimeDetails(animeId)
+            animeDetailsViewModel.getAnimeDetails(animeId)
+        }
 
     }
 }

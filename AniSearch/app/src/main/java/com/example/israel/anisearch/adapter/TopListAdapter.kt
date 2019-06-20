@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -86,6 +87,8 @@ class TopListAdapter(private val onItemClickedListener: OnItemClickedListener) :
                 itemView.i_top_i_image.setImageBitmap(null)
             }
 
+            itemView.i_top_i_image.transitionName = "top_image_transition" + top.id.toString()
+
             itemView.setOnClickListener {
                 val drawable = itemView.i_top_i_image.drawable
                 val image: Bitmap?
@@ -95,12 +98,12 @@ class TopListAdapter(private val onItemClickedListener: OnItemClickedListener) :
                     image = null
                 }
 
-                onItemClickedListener.onItemClicked(it, top, image)
+                onItemClickedListener.onItemClicked(it, itemView.i_top_i_image, top, image)
             }
         }
     }
 
     interface OnItemClickedListener {
-        fun onItemClicked(v: View, top: Top, image: Bitmap?)
+        fun onItemClicked(v: View, imageView: ImageView, top: Top, image: Bitmap?)
     }
 }

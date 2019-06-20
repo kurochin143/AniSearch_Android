@@ -23,6 +23,8 @@ import javax.inject.Inject
 
 class SearchResultsFragment : Fragment() {
 
+    private var isNew: Boolean = true
+
     private lateinit var query: String
     private lateinit var type: String
     private var searchResultsAdapter: SearchResultsAdapter? = null
@@ -98,8 +100,12 @@ class SearchResultsFragment : Fragment() {
         f_search_results_r.layoutManager = GridLayoutManager(context, SPAN_COUNT)
         f_search_results_r.adapter = searchResultsAdapter
 
-        // page 1 search
-        search(1)
+        if (isNew) {
+            isNew = false
+
+            // page 1 search
+            search(1)
+        }
     }
 
     private fun search(page: Int) {
