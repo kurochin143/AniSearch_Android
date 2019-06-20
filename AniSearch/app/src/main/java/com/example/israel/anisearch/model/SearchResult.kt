@@ -7,8 +7,8 @@ import com.example.israel.anisearch.anilist_api.Staff
 import com.example.israel.anisearch.anilist_api.statics.AniListType
 
 class SearchResult(
-    var type: String?,
-    var id: Int?,
+    var type: String,
+    var id: Int,
     var name: String?,
     var imageUrl: String?
 ) {

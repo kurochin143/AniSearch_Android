@@ -64,7 +64,7 @@ class TopListAdapter(private val onItemClickedListener: OnItemClickedListener) :
                             target: Target<Drawable>?,
                             isFirstResource: Boolean
                         ): Boolean {
-                            itemView.i_top_pb_requesting_image.visibility = View.INVISIBLE
+                            itemView.i_top_pb_requesting_image.visibility = View.GONE
                             return false
                         }
 
@@ -75,7 +75,7 @@ class TopListAdapter(private val onItemClickedListener: OnItemClickedListener) :
                             dataSource: DataSource?,
                             isFirstResource: Boolean
                         ): Boolean {
-                            itemView.i_top_pb_requesting_image.visibility = View.INVISIBLE
+                            itemView.i_top_pb_requesting_image.visibility = View.GONE
                             return false
                         }
 
@@ -83,7 +83,7 @@ class TopListAdapter(private val onItemClickedListener: OnItemClickedListener) :
                     .into(itemView.i_top_i_image)
 
             } else { // no image url
-                itemView.i_top_pb_requesting_image.visibility = View.INVISIBLE
+                itemView.i_top_pb_requesting_image.visibility = View.GONE
                 itemView.i_top_i_image.setImageBitmap(null)
             }
 

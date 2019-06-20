@@ -1,10 +1,13 @@
 package com.example.israel.anisearch.adapter
 
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -18,7 +21,10 @@ import com.example.israel.anisearch.model.SearchResults
 import kotlinx.android.synthetic.main.item_search_result.view.*
 import kotlinx.android.synthetic.main.item_search_result_load_more.view.*
 
-class SearchResultsAdapter(private var onLoadNextPageListener: OnLoadNextPageListener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class SearchResultsAdapter(
+    private var onLoadNextPageListener: OnLoadNextPageListener,
+    private var onItemClickedListener: OnItemClickedListener
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     companion object {
         private const val TYPE_CONTENT = 0
         private const val TYPE_LOAD_MORE = 1
@@ -40,7 +46,7 @@ class SearchResultsAdapter(private var onLoadNextPageListener: OnLoadNextPageLis
     override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder, position: Int) {
         if (viewHolder is ContentViewHolder) {
             val searchResult = searchResults.searchResults[position]
-            viewHolder.bind(searchResult)
+            viewHolder.bind(searchResult, onItemClickedListener)
 
         } else if (viewHolder is LoadMoreViewHolder) {
             if (searchResults.currentPage == searchResults.lastPage) { // no next page
@@ -72,7 +78,7 @@ class SearchResultsAdapter(private var onLoadNextPageListener: OnLoadNextPageLis
     }
 
     class ContentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bind(searchResult: SearchResult) {
+        fun bind(searchResult: SearchResult, onItemClickedListener: OnItemClickedListener) {
             itemView.i_search_result_t_name.text = searchResult.name
 
             if (searchResult.imageUrl != null) {
@@ -89,7 +95,7 @@ class SearchResultsAdapter(private var onLoadNextPageListener: OnLoadNextPageLis
                             target: Target<Drawable>?,
                             isFirstResource: Boolean
                         ): Boolean {
-                            itemView.i_search_result_pb_requesting_image.visibility = View.INVISIBLE
+                            itemView.i_search_result_pb_requesting_image.visibility = View.GONE
                             return false
                         }
 
@@ -100,7 +106,7 @@ class SearchResultsAdapter(private var onLoadNextPageListener: OnLoadNextPageLis
                             dataSource: DataSource?,
                             isFirstResource: Boolean
                         ): Boolean {
-                            itemView.i_search_result_pb_requesting_image.visibility = View.INVISIBLE
+                            itemView.i_search_result_pb_requesting_image.visibility = View.GONE
                             return false
                         }
 
@@ -108,8 +114,22 @@ class SearchResultsAdapter(private var onLoadNextPageListener: OnLoadNextPageLis
                     .into(itemView.i_search_result_i_image)
 
             } else { // no image url
-                itemView.i_search_result_pb_requesting_image.visibility = View.INVISIBLE
+                itemView.i_search_result_pb_requesting_image.visibility = View.GONE
                 itemView.i_search_result_i_image.setImageBitmap(null)
+            }
+
+            itemView.i_search_result_i_image.transitionName = "search_result_image_transition" + searchResult.id.toString()
+
+            itemView.setOnClickListener {
+                val drawable = itemView.i_search_result_i_image.drawable
+                val image: Bitmap?
+                if (drawable is BitmapDrawable) {
+                    image = drawable.bitmap
+                } else {
+                    image = null
+                }
+
+                onItemClickedListener.onItemClicked(it, itemView.i_search_result_i_image, searchResult, image)
             }
         }
 
@@ -119,5 +139,9 @@ class SearchResultsAdapter(private var onLoadNextPageListener: OnLoadNextPageLis
 
     interface OnLoadNextPageListener {
         fun loadNextPage(page: Int)
+    }
+
+    interface OnItemClickedListener {
+        fun onItemClicked(v: View, imageView: ImageView, searchResult: SearchResult, image: Bitmap?)
     }
 }

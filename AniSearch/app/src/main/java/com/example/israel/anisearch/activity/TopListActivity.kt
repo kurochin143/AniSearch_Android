@@ -17,7 +17,7 @@ class TopListActivity : AppCompatActivity() {
         Glide.get(this).setMemoryCategory(MemoryCategory.HIGH)
 
         supportFragmentManager.beginTransaction()
-            .add(R.id.a_top_list_fl_root, TopListFragment())
+            .add(R.id.f_top_list_fl_root, TopListFragment())
             .commit()
     }
 

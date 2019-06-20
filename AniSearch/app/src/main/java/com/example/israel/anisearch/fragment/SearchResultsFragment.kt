@@ -3,12 +3,15 @@ package com.example.israel.anisearch.fragment
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
+import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import com.example.israel.anisearch.R
 import com.example.israel.anisearch.adapter.SearchResultsAdapter
 import com.example.israel.anisearch.anilist_api.statics.AniListType
@@ -16,6 +19,7 @@ import com.example.israel.anisearch.anilist_api.statics.CharacterSearchSort
 import com.example.israel.anisearch.anilist_api.statics.MediaSearchSort
 import com.example.israel.anisearch.anilist_api.statics.StaffSearchSort
 import com.example.israel.anisearch.app.AniSearchApp
+import com.example.israel.anisearch.model.SearchResult
 import com.example.israel.anisearch.view_model.SearchViewModel
 import com.example.israel.anisearch.view_model.factory.SearchVMFactory
 import kotlinx.android.synthetic.main.fragment_search_results.*
@@ -23,7 +27,7 @@ import javax.inject.Inject
 
 class SearchResultsFragment : Fragment() {
 
-    private var isNew: Boolean = true
+    private var isReplaced: Boolean = false
 
     private lateinit var query: String
     private lateinit var type: String
@@ -64,6 +68,29 @@ class SearchResultsFragment : Fragment() {
             override fun loadNextPage(page: Int) {
                 search(page)
             }
+        }, object: SearchResultsAdapter.OnItemClickedListener {
+            override fun onItemClicked(v: View, imageView: ImageView, searchResult: SearchResult, image: Bitmap?) {
+                val fragment: Fragment = when (searchResult.type) {
+                    AniListType.ANIME -> AnimeDetailsFragment.newInstance(searchResult.id, image, imageView.transitionName)
+                    else -> return
+                }
+
+                isReplaced = true
+                if (image == null) {
+                    activity!!.supportFragmentManager.beginTransaction()
+                        .replace(R.id.a_search_fl_root, fragment)
+                        .addToBackStack(null)
+                        .commit()
+                } else { // do shared transition
+                    fragment.sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(android.R.transition.move)
+
+                    activity!!.supportFragmentManager.beginTransaction()
+                        .replace(R.id.a_search_fl_root, fragment)
+                        .addToBackStack(null)
+                        .addSharedElement(imageView, imageView.transitionName)
+                        .commit()
+                }
+            }
         })
 
         // view model
@@ -100,9 +127,9 @@ class SearchResultsFragment : Fragment() {
         f_search_results_r.layoutManager = GridLayoutManager(context, SPAN_COUNT)
         f_search_results_r.adapter = searchResultsAdapter
 
-        if (isNew) {
-            isNew = false
-
+        if (isReplaced) {
+            isReplaced = false
+        } else {
             // page 1 search
             search(1)
         }

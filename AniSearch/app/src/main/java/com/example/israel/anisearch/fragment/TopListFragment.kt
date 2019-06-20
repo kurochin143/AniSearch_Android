@@ -52,7 +52,7 @@ class TopListFragment : Fragment() {
         // top view model
         topViewModel = ViewModelProviders.of(this, topVMFactory).get(TopViewModel::class.java)
         topViewModel.getTopListLiveData().observe(this, Observer {
-            a_top_list_cl_requesting.visibility = View.GONE
+            f_top_list_cl_requesting.visibility = View.GONE
 
             if (it != null) {
                 topListAdapter.setTopList(it.topList)
@@ -62,21 +62,26 @@ class TopListFragment : Fragment() {
         // adapter
         topListAdapter = TopListAdapter(object: TopListAdapter.OnItemClickedListener {
             override fun onItemClicked(v: View, imageView: ImageView, top: Top, image: Bitmap?) {
-                // TODO if image is valid do shared transition
-
                 val fragment: Fragment = when (top.type) {
                     AniListType.ANIME -> AnimeDetailsFragment.newInstance(top.id, image, imageView.transitionName)
                     else -> return
                 }
 
-                fragment.sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(android.R.transition.move)
-
                 isReplaced = true
-                activity!!.supportFragmentManager.beginTransaction()
-                    .replace(R.id.a_top_list_fl_root, fragment)
-                    .addToBackStack(null)
-                    .addSharedElement(imageView, imageView.transitionName)
-                    .commit()
+                if (image == null) {
+                    activity!!.supportFragmentManager.beginTransaction()
+                        .replace(R.id.f_top_list_fl_root, fragment)
+                        .addToBackStack(null)
+                        .commit()
+                } else { // do shared transition
+                    fragment.sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(android.R.transition.move)
+
+                    activity!!.supportFragmentManager.beginTransaction()
+                        .replace(R.id.f_top_list_fl_root, fragment)
+                        .addToBackStack(null)
+                        .addSharedElement(imageView, imageView.transitionName)
+                        .commit()
+                }
             }
         })
     }
@@ -93,12 +98,12 @@ class TopListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // setup recycler view
-        a_top_list_r.setHasFixedSize(true)
-        a_top_list_r.layoutManager = LinearLayoutManager(context!!, LinearLayoutManager.VERTICAL, false)
-        a_top_list_r.adapter = topListAdapter
+        f_top_list_r.setHasFixedSize(true)
+        f_top_list_r.layoutManager = LinearLayoutManager(context!!, LinearLayoutManager.VERTICAL, false)
+        f_top_list_r.adapter = topListAdapter
 
         // spinner
-        a_top_list_s_type.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
+        f_top_list_s_type.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
             }
 
@@ -110,25 +115,25 @@ class TopListFragment : Fragment() {
 
                 topListAdapter.setTopList(ArrayList())
 
-                when (AniListType.fromStringArrPosition(a_top_list_s_type.selectedItemPosition)) {
+                when (AniListType.fromStringArrPosition(f_top_list_s_type.selectedItemPosition)) {
                     AniListType.ANIME -> topViewModel.getTopAnime(1, PER_PAGE)
                     AniListType.MANGA -> topViewModel.getTopManga(1, PER_PAGE)
                     AniListType.CHARACTER -> topViewModel.getTopCharacters(1, PER_PAGE)
                     AniListType.STAFF -> topViewModel.getTopStaffs(1, PER_PAGE)
                 }
 
-                a_top_list_cl_requesting.visibility = View.VISIBLE
+                f_top_list_cl_requesting.visibility = View.VISIBLE
             }
         }
 
         // add types to spinner
         ArrayAdapter.createFromResource(context!!, R.array.search_types, android.R.layout.simple_spinner_item).also {
             it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            a_top_list_s_type!!.adapter = it
+            f_top_list_s_type!!.adapter = it
         }
 
         // start search activity button
-        a_top_list_b_start_search.setOnClickListener {
+        f_top_list_b_start_search.setOnClickListener {
             // start search activity
             val intent = Intent(context, SearchActivity::class.java)
             startActivity(intent)
