@@ -8,7 +8,7 @@ import io.reactivex.Single
 
 class AniSearchRepositoryImpl(private val aniListApiService: AniListApiService) : AniSearchRepository() {
 
-    override fun searchAnime(page: Int, perPage: Int, search: String?, sort: String): Observable<AnimeSearchResult> {
+    override fun searchAnime(page: Int, perPage: Int, search: String?, sort: String): Single<AnimeSearchResult> {
         // "{Page(page: $page, perPage: $perPage) {media(search: \"$query\", type: ANIME, sort: $sort, isAdult: false) {id title{romaji english native userPreferred} description coverImage{large medium} bannerImage}}}"
         val queryBuilder = GraphQLQueryBuilder().addObject(
             TPage.createGraphQLObject(page, perPage)
@@ -17,7 +17,7 @@ class AniSearchRepositoryImpl(private val aniListApiService: AniListApiService) 
         return aniListApiService.searchAnime(GraphQLQuery(queryBuilder.build()))
     }
 
-    override fun searchManga(page: Int, perPage: Int, search: String?, sort: String): Observable<MangaSearchResult> {
+    override fun searchManga(page: Int, perPage: Int, search: String?, sort: String): Single<MangaSearchResult> {
         val queryBuilder = GraphQLQueryBuilder().addObject(
             TPage.createGraphQLObject(page, perPage)
                 .addObject(Manga.createGraphQLObject(sort, false, search))
@@ -25,7 +25,7 @@ class AniSearchRepositoryImpl(private val aniListApiService: AniListApiService) 
         return aniListApiService.searchManga(GraphQLQuery(queryBuilder.build()))
     }
 
-    override fun searchCharacter(page: Int, perPage: Int, search: String?, sort: String): Observable<CharacterSearchResult> {
+    override fun searchCharacter(page: Int, perPage: Int, search: String?, sort: String): Single<CharacterSearchResult> {
         val queryBuilder = GraphQLQueryBuilder().addObject(
             TPage.createGraphQLObject(page, perPage)
                 .addObject(Character.createSearchGraphQLObject(sort, search))
@@ -33,7 +33,7 @@ class AniSearchRepositoryImpl(private val aniListApiService: AniListApiService) 
         return aniListApiService.searchCharacter(GraphQLQuery(queryBuilder.build()))
     }
 
-    override fun searchStaff(page: Int, perPage: Int, search: String?, sort: String): Observable<StaffSearchResult> {
+    override fun searchStaff(page: Int, perPage: Int, search: String?, sort: String): Single<StaffSearchResult> {
         val queryBuilder = GraphQLQueryBuilder().addObject(
             TPage.createGraphQLObject(page, perPage)
                 .addObject(Staff.createSearchGraphQLObject(sort, search))
@@ -41,7 +41,7 @@ class AniSearchRepositoryImpl(private val aniListApiService: AniListApiService) 
         return aniListApiService.searchStaff(GraphQLQuery(queryBuilder.build()))
     }
 
-    override fun getAnimeDetails(id: Int): Observable<AnimeResult> {
+    override fun getAnimeDetails(id: Int): Single<AnimeResult> {
         val queryBuilder = GraphQLQueryBuilder()
             .addObject(Anime.createDetailsGraphQLObject("Media", id))
 

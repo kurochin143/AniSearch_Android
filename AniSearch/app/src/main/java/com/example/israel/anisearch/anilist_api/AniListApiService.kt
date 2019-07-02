@@ -17,19 +17,19 @@ typealias MediaResult = TData<TMedia<Media>>
 
 interface AniListApiService {
     @POST("/")
-    fun searchAnime(@Body query: GraphQLQuery): Observable<AnimeSearchResult>
+    fun searchAnime(@Body query: GraphQLQuery): Single<AnimeSearchResult>
 
     @POST("/")
-    fun searchManga(@Body query: GraphQLQuery): Observable<MangaSearchResult>
+    fun searchManga(@Body query: GraphQLQuery): Single<MangaSearchResult>
 
     @POST("/")
-    fun searchCharacter(@Body query: GraphQLQuery): Observable<CharacterSearchResult>
+    fun searchCharacter(@Body query: GraphQLQuery): Single<CharacterSearchResult>
 
     @POST("/")
-    fun searchStaff(@Body query: GraphQLQuery): Observable<StaffSearchResult>
+    fun searchStaff(@Body query: GraphQLQuery): Single<StaffSearchResult>
 
     @POST("/")
-    fun getAnimeDetails(@Body query: GraphQLQuery): Observable<AnimeResult>
+    fun getAnimeDetails(@Body query: GraphQLQuery): Single<AnimeResult>
 
     @POST("/")
     fun getMediaCharacters(@Body query: GraphQLQuery): Single<MediaResult>
