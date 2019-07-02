@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.example.israel.anisearch.anilist_api.Anime
+import com.example.israel.anisearch.anilist_api.Media
 import com.example.israel.anisearch.repository.AniSearchRepository
 import io.reactivex.disposables.Disposable
 
@@ -11,9 +12,11 @@ class AnimeDetailsViewModel(private val aniSearchRepository: AniSearchRepository
 
     private var getAnimeDetailsDisposable: Disposable? = null
     private var animeDetailsLiveData = MutableLiveData<Anime?>()
+    private var mediaCharactersLiveData = MutableLiveData<Media?>()
     private var errorLiveData = MutableLiveData<Throwable>()
 
     fun getAnimeDetailsLiveData(): LiveData<Anime?> = animeDetailsLiveData
+    fun getMediaCharactersLiveData(): LiveData<Media?> = mediaCharactersLiveData
     fun getErrorLiveData(): LiveData<Throwable> = errorLiveData
 
     fun getAnimeDetails(id: Int) {
@@ -23,7 +26,19 @@ class AnimeDetailsViewModel(private val aniSearchRepository: AniSearchRepository
             },
             {
                 errorLiveData.postValue(it)
-            })
+            }
+        )
+    }
+
+    fun getMediaCharacters(id: Int, page: Int, perPage: Int, sort: String) {
+        getAnimeDetailsDisposable = aniSearchRepository.getMediaCharacters(id, page, perPage, sort).subscribe(
+            {
+                mediaCharactersLiveData.postValue(it?.data?.media)
+            },
+            {
+                errorLiveData.postValue(it)
+            }
+        )
     }
 
     override fun onCleared() {

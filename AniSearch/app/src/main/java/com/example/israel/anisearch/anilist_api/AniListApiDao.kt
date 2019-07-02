@@ -3,7 +3,9 @@ package com.example.israel.anisearch.anilist_api
 import com.example.israel.anisearch.graphql.GraphQLQuery
 import com.example.israel.anisearch.graphql.GraphQLQueryBuilder
 import io.reactivex.Observable
+import io.reactivex.Single
 
+// TODO remove DAO, move to repository
 class AniListApiDao(private var apiService: ApiService) {
     fun searchAnime(page: Int, perPage: Int, search: String?, sort: String): Observable<AnimeSearchResult> {
         // "{Page(page: $page, perPage: $perPage) {media(search: \"$query\", type: ANIME, sort: $sort, isAdult: false) {id title{romaji english native userPreferred} description coverImage{large medium} bannerImage}}}"
@@ -38,11 +40,18 @@ class AniListApiDao(private var apiService: ApiService) {
         return apiService.searchStaff(GraphQLQuery(queryBuilder.build()))
     }
 
-    fun getAnimeDetails(id: Int): Observable<AnimeDetailsResult> {
+    fun getAnimeDetails(id: Int): Observable<AnimeResult> {
         val queryBuilder = GraphQLQueryBuilder()
-            .addObject(Anime.createDetailsGraphQLObject(id, false))
+            .addObject(Anime.createDetailsGraphQLObject("Media", id))
 
         return apiService.getAnimeDetails(GraphQLQuery(queryBuilder.build()))
+    }
+
+    fun getMediaCharacters(id: Int, page: Int, perPage: Int, sort: String): Single<MediaResult> {
+        val queryBuilder = GraphQLQueryBuilder()
+            .addObject(Media.createCharactersGraphQLObject(id, page, perPage, sort))
+
+        return apiService.getMediaCharacters(GraphQLQuery(queryBuilder.build()))
     }
 
 }

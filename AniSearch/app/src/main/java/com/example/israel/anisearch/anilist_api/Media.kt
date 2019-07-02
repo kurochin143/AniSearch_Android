@@ -3,8 +3,10 @@ package com.example.israel.anisearch.anilist_api
 import com.example.israel.anisearch.graphql.GraphQLObject
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
-abstract class Media {
+// TODO parcelable, don't forget member variables
+open class Media : Serializable {
 
     @SerializedName("id")
     @Expose
@@ -50,7 +52,11 @@ abstract class Media {
     @Expose
     var averageScore: Int? = null
 
-    class Title {
+    @SerializedName("characters")
+    @Expose
+    var characterConnection: CharacterConnection? = null
+
+    class Title : Serializable {
         @SerializedName("romaji")
         @Expose
         var romaji: String? = null
@@ -78,7 +84,7 @@ abstract class Media {
         }
     }
 
-    class CoverImage {
+    class CoverImage : Serializable {
         @SerializedName("medium")
         @Expose
         var medium: String? = null
@@ -111,11 +117,9 @@ abstract class Media {
             }
         }
 
-        fun createDetailsGraphQLObject(id: Int, type: String, isAdult: Boolean): GraphQLObject {
-            return GraphQLObject("Media").also {
+        fun createDetailsGraphQLObject(name: String, id: Int): GraphQLObject {
+            return GraphQLObject(name).also {
                 it.addParam("id", id.toString())
-                it.addParam("type", type)
-                it.addParam("isAdult", isAdult.toString())
 
                 it.addField("id")
                 it.addField("type")
@@ -128,6 +132,14 @@ abstract class Media {
                 it.addObject(FuzzyDate.createGraphQLObject("endDate"))
                 it.addField("genres")
                 it.addField("averageScore")
+            }
+        }
+
+        fun createCharactersGraphQLObject(id: Int, page: Int, perPage: Int, sort: String): GraphQLObject {
+            return GraphQLObject("Media").also {
+                it.addParam("id", id.toString())
+
+                it.addObject(CharacterConnection.createGraphQLObject(page, perPage, sort))
             }
         }
     }

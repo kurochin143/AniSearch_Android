@@ -63,7 +63,7 @@ class TopListFragment : Fragment() {
         topListAdapter = TopListAdapter(object: TopListAdapter.OnItemClickedListener {
             override fun onItemClicked(v: View, imageView: ImageView, top: Top, image: Bitmap?) {
                 val fragment: Fragment = when (top.type) {
-                    AniListType.ANIME -> AnimeDetailsFragment.newInstance(top.id, image, imageView.transitionName)
+                    AniListType.ANIME -> AnimeDetailsFragment.newInstance(top.id, image)
                     else -> return
                 }
 

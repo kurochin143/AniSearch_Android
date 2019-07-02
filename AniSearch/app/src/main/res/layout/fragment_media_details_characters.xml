@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+             android:clickable="true"
+             android:focusable="true"
+             tools:context=".fragment.MediaDetailsCharactersFragment">
+
+    <android.support.v7.widget.RecyclerView
+            android:id="@+id/f_media_details_characters_r"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layoutManager="android.support.v7.widget.GridLayoutManager"
+            app:spanCount="3"
+            tools:listitem="@layout/item_character">
+    </android.support.v7.widget.RecyclerView>
+
+</FrameLayout>

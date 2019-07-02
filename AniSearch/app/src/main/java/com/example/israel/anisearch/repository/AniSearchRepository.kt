@@ -2,6 +2,7 @@ package com.example.israel.anisearch.repository
 
 import com.example.israel.anisearch.anilist_api.*
 import io.reactivex.Observable
+import io.reactivex.Single
 
 abstract class AniSearchRepository {
     abstract fun searchAnime(page: Int, perPage: Int, search: String?, sort: String): Observable<AnimeSearchResult>
@@ -9,6 +10,8 @@ abstract class AniSearchRepository {
     abstract fun searchCharacter(page: Int, perPage: Int, search: String?, sort: String): Observable<CharacterSearchResult>
     abstract fun searchStaff(page: Int, perPage: Int, search: String?, sort: String): Observable<StaffSearchResult>
 
-    abstract fun getAnimeDetails(id: Int): Observable<AnimeDetailsResult>
+    abstract fun getAnimeDetails(id: Int): Observable<AnimeResult>
+
+    abstract fun getMediaCharacters(id: Int, page: Int, perPage: Int, sort: String): Single<MediaResult>
 
 }

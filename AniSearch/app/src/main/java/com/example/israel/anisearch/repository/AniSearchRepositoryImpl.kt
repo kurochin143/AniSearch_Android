@@ -2,6 +2,7 @@ package com.example.israel.anisearch.repository
 
 import com.example.israel.anisearch.anilist_api.*
 import io.reactivex.Observable
+import io.reactivex.Single
 
 class AniSearchRepositoryImpl(private val aniListApiDao: AniListApiDao) : AniSearchRepository() {
 
@@ -21,9 +22,11 @@ class AniSearchRepositoryImpl(private val aniListApiDao: AniListApiDao) : AniSea
         return aniListApiDao.searchStaff(page, perPage, search, sort)
     }
 
-    override fun getAnimeDetails(id: Int): Observable<AnimeDetailsResult> {
+    override fun getAnimeDetails(id: Int): Observable<AnimeResult> {
         return aniListApiDao.getAnimeDetails(id)
     }
 
-
+    override fun getMediaCharacters(id: Int, page: Int, perPage: Int, sort: String): Single<MediaResult> {
+        return aniListApiDao.getMediaCharacters(id, page, perPage, sort)
+    }
 }

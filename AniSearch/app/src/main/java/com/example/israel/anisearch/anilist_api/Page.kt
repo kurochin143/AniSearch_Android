@@ -19,6 +19,12 @@ abstract class Page {
         @Expose
         var lastPage: Int? = null
 
+        constructor()
+        constructor(currentPage: Int?, lastPage: Int?) {
+            this.currentPage = currentPage
+            this.lastPage = lastPage
+        }
+
         companion object {
             fun createGraphQLObject(): GraphQLObject {
                 return GraphQLObject("pageInfo")

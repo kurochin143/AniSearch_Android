@@ -3,9 +3,10 @@ package com.example.israel.anisearch.anilist_api
 import com.example.israel.anisearch.graphql.GraphQLObject
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 import java.text.DateFormatSymbols
 
-class FuzzyDate {
+class FuzzyDate : Serializable{
 
     @SerializedName("year")
     @Expose

@@ -13,18 +13,23 @@ class TopListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_top_list)
 
-        // Glide memory high
-        Glide.get(this).setMemoryCategory(MemoryCategory.HIGH)
-
         supportFragmentManager.beginTransaction()
             .add(R.id.f_top_list_fl_root, TopListFragment())
             .commit()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onResume() {
+        super.onResume()
+
+        // Glide memory high
+        Glide.get(this).setMemoryCategory(MemoryCategory.HIGH)
+    }
+
+    override fun onPause() {
+        super.onPause()
 
         // Glide memory normal
         Glide.get(this).setMemoryCategory(MemoryCategory.NORMAL)
     }
+
 }

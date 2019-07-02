@@ -71,7 +71,7 @@ class SearchResultsFragment : Fragment() {
         }, object: SearchResultsAdapter.OnItemClickedListener {
             override fun onItemClicked(v: View, imageView: ImageView, searchResult: SearchResult, image: Bitmap?) {
                 val fragment: Fragment = when (searchResult.type) {
-                    AniListType.ANIME -> AnimeDetailsFragment.newInstance(searchResult.id, image, imageView.transitionName)
+                    AniListType.ANIME -> AnimeDetailsFragment.newInstance(searchResult.id, image)
                     else -> return
                 }
 
@@ -97,10 +97,7 @@ class SearchResultsFragment : Fragment() {
         searchViewModel = ViewModelProviders.of(this, searchResultVMFactory).get(SearchViewModel::class.java)
         searchViewModel.getSearchResultsLiveData().observe(this, Observer {
             f_search_results_pb_requesting.visibility = View.GONE
-
-            if (it == null) {
-                return@Observer
-            }
+            if (it == null) return@Observer
 
             if (it.currentPage == 1) {
                 searchResultsAdapter!!.setSearchResults(it)

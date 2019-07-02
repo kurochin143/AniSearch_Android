@@ -3,6 +3,8 @@ package com.example.israel.anisearch.activity
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ArrayAdapter
+import com.bumptech.glide.Glide
+import com.bumptech.glide.MemoryCategory
 import com.example.israel.anisearch.R
 import com.example.israel.anisearch.anilist_api.statics.AniListType
 import com.example.israel.anisearch.fragment.SearchResultsFragment
@@ -27,5 +29,19 @@ class SearchActivity : AppCompatActivity() {
                 .addToBackStack(null)
                 .commit()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        // Glide memory high
+        Glide.get(this).setMemoryCategory(MemoryCategory.HIGH)
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        // Glide memory normal
+        Glide.get(this).setMemoryCategory(MemoryCategory.NORMAL)
     }
 }

@@ -19,20 +19,20 @@
                 android:layout_height="wrap_content">
 
             <FrameLayout
-                    android:id="@+id/i_search_result_fl_image"
+                    android:id="@+id/i_character_fl_image"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/item_search_result_height"
                     app:layout_constraintTop_toTopOf="parent">
 
                 <ImageView
-                        android:id="@+id/i_search_result_i_image"
+                        android:id="@+id/i_character_i_image"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:scaleType="fitXY"
                         android:src="@drawable/fma"/>
 
                 <ProgressBar
-                        android:id="@+id/i_search_result_pb_requesting_image"
+                        android:id="@+id/i_character_pb_requesting_image"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:visibility="gone"/>
@@ -40,7 +40,7 @@
             </FrameLayout>
 
             <TextView
-                    android:id="@+id/i_search_result_t_name"
+                    android:id="@+id/i_character_t_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="3dp"
@@ -48,7 +48,7 @@
                     android:textColor="@color/colorTextDark"
                     android:maxLines="2"
                     android:minLines="2"
-                    app:layout_constraintTop_toBottomOf="@+id/i_search_result_fl_image"
+                    app:layout_constraintTop_toBottomOf="@+id/i_character_fl_image"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"/>
 

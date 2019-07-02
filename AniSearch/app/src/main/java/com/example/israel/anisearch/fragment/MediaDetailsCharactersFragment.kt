@@ -3,42 +3,42 @@ package com.example.israel.anisearch.fragment
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.widget.GridLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 
 import com.example.israel.anisearch.R
-import com.example.israel.anisearch.adapter.AnimeDetailsPagerAdapter
+import com.example.israel.anisearch.adapter.MediaDetailsCharactersAdapter
+import com.example.israel.anisearch.anilist_api.statics.CharacterSearchSort
 import com.example.israel.anisearch.app.AniSearchApp
 import com.example.israel.anisearch.view_model.AnimeDetailsViewModel
 import com.example.israel.anisearch.view_model.factory.AnimeDetailsVMFactory
-import kotlinx.android.synthetic.main.fragment_anime_details.*
+import kotlinx.android.synthetic.main.fragment_media_details_characters.*
 import javax.inject.Inject
 
-class AnimeDetailsFragment : Fragment() {
+class MediaDetailsCharactersFragment : Fragment() {
 
-    private var animeId = 0
-    private var image: Bitmap? = null
+    private var animeId: Int = -1
 
-    private lateinit var animeDetailsPagerAdapter: AnimeDetailsPagerAdapter
+    private lateinit var mediaDetailsCharactersAdapter: MediaDetailsCharactersAdapter
 
     @Inject
     lateinit var animeDetailsVMFactory: AnimeDetailsVMFactory
     private lateinit var animeDetailsViewModel: AnimeDetailsViewModel
 
     companion object {
+        private const val SPAN_COUNT = 3
+        private const val PER_PAGE = 20
         private const val ARG_ANIME_ID = "anime_id"
-        private const val ARG_IMAGE = "image"
 
-        fun newInstance(animeId: Int, image: Bitmap?) =
-            AnimeDetailsFragment().apply {
+        fun newInstance(animeId: Int) =
+            MediaDetailsCharactersFragment().apply {
                 arguments = Bundle().apply {
                     putInt(ARG_ANIME_ID, animeId)
-                    putParcelable(ARG_IMAGE, image)
                 }
             }
     }
@@ -47,8 +47,9 @@ class AnimeDetailsFragment : Fragment() {
         super.onCreate(savedInstanceState)
         arguments?.let {
             animeId = it.getInt(ARG_ANIME_ID)
-            image = it.getParcelable(ARG_IMAGE)
         }
+
+        mediaDetailsCharactersAdapter = MediaDetailsCharactersAdapter()
 
         // inject
         (activity!!.application as AniSearchApp).getAnimeDetailsComponent().inject(this)
@@ -58,14 +59,16 @@ class AnimeDetailsFragment : Fragment() {
         animeDetailsViewModel.getErrorLiveData().observe(this, Observer {
             Toast.makeText(context, it!!.message, Toast.LENGTH_LONG).show()
         })
-        animeDetailsViewModel.getAnimeDetailsLiveData().observe(this, Observer {
-            val animeDetails = it ?: return@Observer // TODO make Anime nonnull
+        animeDetailsViewModel.getMediaCharactersLiveData().observe(this, Observer {
+            val mediaCharacters = it ?: return@Observer
+            val characterConnection = mediaCharacters.characterConnection ?: return@Observer
+            characterConnection.edges ?: return@Observer
+            characterConnection.pageInfo?.currentPage ?: return@Observer
+            characterConnection.pageInfo?.lastPage ?: return@Observer
 
-            f_anime_details_pb.visibility = View.INVISIBLE
-            animeDetailsPagerAdapter = AnimeDetailsPagerAdapter(childFragmentManager, animeDetails, image)
-            f_anime_details_vp.adapter = animeDetailsPagerAdapter
-            f_anime_details_tl.setupWithViewPager(f_anime_details_vp)
+            mediaDetailsCharactersAdapter.setCharacterConnection(characterConnection)
         })
+
     }
 
     override fun onCreateView(
@@ -73,13 +76,17 @@ class AnimeDetailsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_anime_details, container, false)
+        return inflater.inflate(R.layout.fragment_media_details_characters, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        animeDetailsViewModel.getAnimeDetails(animeId)
+        f_media_details_characters_r.setHasFixedSize(true)
+        f_media_details_characters_r.layoutManager = GridLayoutManager(context, SPAN_COUNT)
+        f_media_details_characters_r.adapter = mediaDetailsCharactersAdapter
+
+        animeDetailsViewModel.getMediaCharacters(animeId, 1, PER_PAGE, CharacterSearchSort.ROLE)
 
     }
 }

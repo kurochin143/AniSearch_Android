@@ -1,200 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".fragment.AnimeDetailsFragment"
-        android:background="#FFFFFF"
-        android:clickable="true"
-        android:focusable="true">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+             tools:context=".fragment.AnimeDetailsFragment">
 
-    <android.support.constraint.ConstraintLayout
+    <android.support.design.widget.TabLayout
+            android:id="@+id/f_anime_details_tl"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="10dp">
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary" />
 
-        <LinearLayout
-                android:id="@+id/f_anime_details_ll_0"
+    <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <android.support.v4.view.ViewPager
+                android:id="@+id/f_anime_details_vp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent"
-                android:orientation="horizontal">
+                android:layout_height="match_parent">
+        </android.support.v4.view.ViewPager>
 
-            <ImageView
-                    android:id="@+id/f_anime_details_i_image"
-                    android:layout_width="130dp"
-                    android:layout_height="200dp"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/fma"/>
+        <ProgressBar
+                android:id="@+id/f_anime_details_pb"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
 
-            <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+    </FrameLayout>
 
-                <TextView
-                        android:id="@+id/f_anime_details_t_name_english"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Full Metal Alchemist"
-                        android:textSize="20sp"
-                        android:maxLines="3"/>
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <ScrollView android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/f_anime_details_ll_0"
-                    android:scrollbarFadeDuration="1">
-
-            <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Description"
-                        android:textSize="@dimen/fragment_anime_details_text_size"
-                        android:textStyle="bold"/>
-
-                <TextView
-                        android:id="@+id/f_anime_details_t_description"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam nec nunc accumsan, congue lectus sit amet, ultricies ex. Nam aliquet feugiat dolor ac fringilla. Nulla facilisi. Curabitur laoreet mollis nunc, ac auctor ante pharetra ut. Sed gravida nunc dolor, a tincidunt arcu vulputate non. Curabitur eu justo tempor erat volutpat faucibus. Aliquam interdum leo id hendrerit imperdiet. Vivamus risus lacus, efficitur vel augue a, eleifend condimentum massa. Ut sem lacus, pellentesque eu facilisis et, ornare id est. Suspendisse aliquam eros leo, et rhoncus est tristique nec. Duis ac justo vitae sem tempus rutrum ac consequat dolor."
-                        android:textSize="@dimen/fragment_anime_details_text_size"/>
-
-                <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal" app:layout_constraintTop_toTopOf="parent">
-
-                    <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.5"
-                            android:orientation="vertical">
-
-                        <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Format"
-                                android:textSize="@dimen/fragment_anime_details_text_size"
-                                android:textStyle="bold"/>
-
-                        <TextView
-                                android:id="@+id/f_anime_details_t_format"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:paddingBottom="10dp"
-                                android:text="TV"
-                                android:textSize="@dimen/fragment_anime_details_text_size"/>
-
-                        <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Status"
-                                android:textSize="@dimen/fragment_anime_details_text_size"
-                                android:textStyle="bold"/>
-
-                        <TextView
-                                android:id="@+id/f_anime_details_t_status"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:paddingBottom="10dp"
-                                android:text="Finished"
-                                android:textSize="@dimen/fragment_anime_details_text_size"/>
-
-                        <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Start Date"
-                                android:textSize="@dimen/fragment_anime_details_text_size"
-                                android:textStyle="bold"/>
-
-                        <TextView
-                                android:id="@+id/f_anime_details_t_start_date"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:paddingBottom="10dp"
-                                android:text="Jan 1, 2000"
-                                android:textSize="@dimen/fragment_anime_details_text_size"/>
-
-                        <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="End Date"
-                                android:textSize="@dimen/fragment_anime_details_text_size"
-                                android:textStyle="bold"/>
-
-                        <TextView
-                                android:id="@+id/f_anime_details_t_end_date"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:paddingBottom="10dp"
-                                android:text="Jan 1, 2001"
-                                android:textSize="@dimen/fragment_anime_details_text_size"/>
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.5"
-                            android:orientation="vertical">
-
-                        <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Episodes"
-                                android:textSize="@dimen/fragment_anime_details_text_size"
-                                android:textStyle="bold"/>
-
-                        <TextView
-                                android:id="@+id/f_anime_details_t_episodes"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:paddingBottom="10dp"
-                                android:text="12"
-                                android:textSize="@dimen/fragment_anime_details_text_size"/>
-
-                        <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Duration"
-                                android:textSize="@dimen/fragment_anime_details_text_size"
-                                android:textStyle="bold"/>
-
-                        <TextView
-                                android:id="@+id/f_anime_details_t_duration"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:paddingBottom="10dp"
-                                android:text="24 mins"
-                                android:textSize="@dimen/fragment_anime_details_text_size"/>
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-                <GridLayout
-                        android:id="@+id/f_anime_details_gl_genres"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:columnCount="2"
-                        android:orientation="horizontal">
-
-                </GridLayout>
-
-            </LinearLayout>
-
-        </ScrollView>
-
-    </android.support.constraint.ConstraintLayout>
-
-</FrameLayout>
+</LinearLayout>

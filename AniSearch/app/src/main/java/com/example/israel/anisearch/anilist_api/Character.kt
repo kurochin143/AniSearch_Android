@@ -79,5 +79,13 @@ class Character {
                 it.addObject(Image.createGraphQLObject())
             }
         }
+
+        fun createDetailsGraphQLObject(name: String): GraphQLObject {
+            return GraphQLObject(name).also {
+                it.addField("id")
+                it.addObject(Name.createGraphQLObject())
+                it.addObject(Image.createGraphQLObject())
+            }
+        }
     }
 }

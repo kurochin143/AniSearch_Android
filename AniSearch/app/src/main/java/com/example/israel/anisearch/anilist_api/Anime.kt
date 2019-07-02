@@ -19,8 +19,8 @@ class Anime : Media() {
             return createSearchGraphQLObject("ANIME", sort, isAdult, search)
         }
 
-        fun createDetailsGraphQLObject(id: Int, isAdult: Boolean): GraphQLObject {
-            return createDetailsGraphQLObject(id, "ANIME", isAdult).also {
+        fun createDetailsGraphQLObject(name: String, id: Int): GraphQLObject {
+            return Media.createDetailsGraphQLObject(name, id).also {
                 it.addField("episodes")
                 it.addField("duration")
             }
