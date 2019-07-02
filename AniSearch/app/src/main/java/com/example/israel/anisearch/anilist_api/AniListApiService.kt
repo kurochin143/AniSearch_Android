@@ -15,7 +15,7 @@ typealias AnimeResult = TData<TMedia<Anime>>
 
 typealias MediaResult = TData<TMedia<Media>>
 
-interface ApiService {
+interface AniListApiService {
     @POST("/")
     fun searchAnime(@Body query: GraphQLQuery): Observable<AnimeSearchResult>
 

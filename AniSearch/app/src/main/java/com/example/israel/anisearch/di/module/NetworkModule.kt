@@ -1,6 +1,6 @@
 package com.example.israel.anisearch.di.module
 
-import com.example.israel.anisearch.anilist_api.ApiService
+import com.example.israel.anisearch.anilist_api.AniListApiService
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
@@ -38,7 +38,7 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideApiService(retrofit: Retrofit) : ApiService {
-        return retrofit.create(ApiService::class.java)
+    fun provideApiService(retrofit: Retrofit) : AniListApiService {
+        return retrofit.create(AniListApiService::class.java)
     }
 }
