@@ -6,8 +6,6 @@ import androidx.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
@@ -19,9 +17,9 @@ import android.widget.ImageView
 import com.example.israel.anisearch.R
 import com.example.israel.anisearch.activity.SearchActivity
 import com.example.israel.anisearch.adapter.TopListAdapter
-import com.example.israel.anisearch.anilist_api.statics.AniListType
+import com.example.israel.anisearch.statics.AniListType
 import com.example.israel.anisearch.app.AniSearchApp
-import com.example.israel.anisearch.model.Top
+import com.example.israel.anisearch.model.presentation.Top
 import com.example.israel.anisearch.view_model.TopViewModel
 import com.example.israel.anisearch.view_model.factory.TopVMFactory
 import kotlinx.android.synthetic.main.fragment_top_list.*

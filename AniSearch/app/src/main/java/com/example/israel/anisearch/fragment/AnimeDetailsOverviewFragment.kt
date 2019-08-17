@@ -3,14 +3,13 @@ package com.example.israel.anisearch.fragment
 
 import android.graphics.Bitmap
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.GridLayout
 
 import com.example.israel.anisearch.R
-import com.example.israel.anisearch.anilist_api.Anime
+import com.example.israel.anisearch.model.data.Anime
 import kotlinx.android.synthetic.main.fragment_anime_details_overview.*
 import kotlinx.android.synthetic.main.item_anime_details_genre.view.*
 

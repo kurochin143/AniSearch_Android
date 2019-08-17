@@ -1,11 +1,11 @@
 package com.example.israel.anisearch.view_model
 
 import androidx.lifecycle.Observer
-import com.example.israel.anisearch.anilist_api.AniListApiService
-import com.example.israel.anisearch.anilist_api.CharacterSearchResult
-import com.example.israel.anisearch.anilist_api.TData
+import com.example.israel.anisearch.api.AniListApiService
+import com.example.israel.anisearch.api.CharacterSearchResult
+import com.example.israel.anisearch.model.data.TData
 import com.example.israel.anisearch.graphql.GraphQLQuery
-import com.example.israel.anisearch.model.TopList
+import com.example.israel.anisearch.model.presentation.TopList
 import com.example.israel.anisearch.repository.AniSearchRepositoryImpl
 import com.example.israel.anisearch.view_model.factory.TopVMFactory
 import io.reactivex.Single

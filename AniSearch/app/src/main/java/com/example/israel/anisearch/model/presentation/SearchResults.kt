@@ -1,4 +1,4 @@
-package com.example.israel.anisearch.model
+package com.example.israel.anisearch.model.presentation
 
 class SearchResults(
     var type: String,

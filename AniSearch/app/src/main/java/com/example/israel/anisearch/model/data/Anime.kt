@@ -1,4 +1,4 @@
-package com.example.israel.anisearch.anilist_api
+package com.example.israel.anisearch.model.data
 
 import com.example.israel.anisearch.graphql.GraphQLObject
 import com.google.gson.annotations.Expose
@@ -16,7 +16,12 @@ class Anime : Media() {
 
     companion object {
         fun createSearchGraphQLObject(sort: String, isAdult: Boolean, search: String?): GraphQLObject {
-            return createSearchGraphQLObject("ANIME", sort, isAdult, search)
+            return createSearchGraphQLObject(
+                "ANIME",
+                sort,
+                isAdult,
+                search
+            )
         }
 
         fun createDetailsGraphQLObject(name: String, id: Int): GraphQLObject {

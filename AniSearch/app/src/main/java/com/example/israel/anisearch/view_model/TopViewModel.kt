@@ -3,12 +3,12 @@ package com.example.israel.anisearch.view_model
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.israel.anisearch.anilist_api.statics.AniListType
-import com.example.israel.anisearch.anilist_api.statics.CharacterSearchSort
-import com.example.israel.anisearch.anilist_api.statics.MediaSearchSort
-import com.example.israel.anisearch.anilist_api.statics.StaffSearchSort
-import com.example.israel.anisearch.model.Top
-import com.example.israel.anisearch.model.TopList
+import com.example.israel.anisearch.statics.AniListType
+import com.example.israel.anisearch.statics.CharacterSearchSort
+import com.example.israel.anisearch.statics.MediaSearchSort
+import com.example.israel.anisearch.statics.StaffSearchSort
+import com.example.israel.anisearch.model.presentation.Top
+import com.example.israel.anisearch.model.presentation.TopList
 import com.example.israel.anisearch.repository.AniSearchRepository
 import io.reactivex.disposables.Disposable
 

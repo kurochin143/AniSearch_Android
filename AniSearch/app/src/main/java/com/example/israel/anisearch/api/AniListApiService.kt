@@ -1,7 +1,7 @@
-package com.example.israel.anisearch.anilist_api
+package com.example.israel.anisearch.api
 
 import com.example.israel.anisearch.graphql.GraphQLQuery
-import io.reactivex.Observable
+import com.example.israel.anisearch.model.data.*
 import io.reactivex.Single
 import retrofit2.http.Body
 import retrofit2.http.POST

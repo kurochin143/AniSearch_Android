@@ -3,9 +3,9 @@ package com.example.israel.anisearch.view_model
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.israel.anisearch.anilist_api.statics.AniListType
-import com.example.israel.anisearch.model.SearchResult
-import com.example.israel.anisearch.model.SearchResults
+import com.example.israel.anisearch.statics.AniListType
+import com.example.israel.anisearch.model.presentation.SearchResult
+import com.example.israel.anisearch.model.presentation.SearchResults
 import com.example.israel.anisearch.repository.AniSearchRepository
 import io.reactivex.disposables.Disposable
 

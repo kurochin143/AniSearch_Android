@@ -5,8 +5,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import android.graphics.Bitmap
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.GridLayoutManager
 import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
@@ -14,12 +12,12 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import com.example.israel.anisearch.R
 import com.example.israel.anisearch.adapter.SearchResultsAdapter
-import com.example.israel.anisearch.anilist_api.statics.AniListType
-import com.example.israel.anisearch.anilist_api.statics.CharacterSearchSort
-import com.example.israel.anisearch.anilist_api.statics.MediaSearchSort
-import com.example.israel.anisearch.anilist_api.statics.StaffSearchSort
+import com.example.israel.anisearch.statics.AniListType
+import com.example.israel.anisearch.statics.CharacterSearchSort
+import com.example.israel.anisearch.statics.MediaSearchSort
+import com.example.israel.anisearch.statics.StaffSearchSort
 import com.example.israel.anisearch.app.AniSearchApp
-import com.example.israel.anisearch.model.SearchResult
+import com.example.israel.anisearch.model.presentation.SearchResult
 import com.example.israel.anisearch.view_model.SearchViewModel
 import com.example.israel.anisearch.view_model.factory.SearchVMFactory
 import kotlinx.android.synthetic.main.fragment_search_results.*

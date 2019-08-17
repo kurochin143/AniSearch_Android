@@ -1,7 +1,8 @@
-package com.example.israel.anisearch.anilist_api
+package com.example.israel.anisearch.api
 
-import com.example.israel.anisearch.graphql.GraphQLQuery
 import com.example.israel.anisearch.graphql.GraphQLQueryBuilder
+import com.example.israel.anisearch.model.data.Anime
+import com.example.israel.anisearch.model.data.TPage
 import org.junit.Test
 
 class AniListApiDaoTest {
@@ -10,7 +11,8 @@ class AniListApiDaoTest {
     fun getTopAnime_QueryBuilder() {
 
         val queryBuiltStr = GraphQLQueryBuilder().also {
-            it.addObject(TPage.createGraphQLObject(1, 1)
+            it.addObject(
+                TPage.createGraphQLObject(1, 1)
                 .addObject(Anime.createSearchGraphQLObject("SEARCH_MATCH", false, "hehe")))
         }.build()
 

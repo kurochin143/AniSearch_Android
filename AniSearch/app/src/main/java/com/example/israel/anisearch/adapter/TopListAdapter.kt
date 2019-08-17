@@ -3,7 +3,6 @@ package com.example.israel.anisearch.adapter
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,7 +14,7 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.example.israel.anisearch.R
-import com.example.israel.anisearch.model.Top
+import com.example.israel.anisearch.model.presentation.Top
 import kotlinx.android.synthetic.main.item_top.view.*
 
 class TopListAdapter(private val onItemClickedListener: OnItemClickedListener) : androidx.recyclerview.widget.RecyclerView.Adapter<TopListAdapter.ViewHolder>() {

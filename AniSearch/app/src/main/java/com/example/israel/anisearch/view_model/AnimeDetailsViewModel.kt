@@ -3,8 +3,8 @@ package com.example.israel.anisearch.view_model
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.israel.anisearch.anilist_api.Anime
-import com.example.israel.anisearch.anilist_api.Media
+import com.example.israel.anisearch.model.data.Anime
+import com.example.israel.anisearch.model.data.Media
 import com.example.israel.anisearch.repository.AniSearchRepository
 import io.reactivex.disposables.Disposable
 

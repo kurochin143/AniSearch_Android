@@ -4,8 +4,6 @@ package com.example.israel.anisearch.fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.GridLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +11,7 @@ import android.widget.Toast
 
 import com.example.israel.anisearch.R
 import com.example.israel.anisearch.adapter.MediaDetailsCharactersAdapter
-import com.example.israel.anisearch.anilist_api.statics.CharacterSearchSort
+import com.example.israel.anisearch.statics.CharacterSearchSort
 import com.example.israel.anisearch.app.AniSearchApp
 import com.example.israel.anisearch.view_model.AnimeDetailsViewModel
 import com.example.israel.anisearch.view_model.factory.AnimeDetailsVMFactory

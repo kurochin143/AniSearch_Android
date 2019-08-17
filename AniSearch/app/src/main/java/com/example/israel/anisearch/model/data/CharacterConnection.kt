@@ -1,8 +1,9 @@
-package com.example.israel.anisearch.anilist_api
+package com.example.israel.anisearch.model.data
 
 import com.example.israel.anisearch.graphql.GraphQLObject
 
-class CharacterConnection : TConnection<CharacterEdge> {
+class CharacterConnection :
+    TConnection<CharacterEdge> {
 
     constructor()
     constructor(edges: MutableList<CharacterEdge>?, pageInfo: Page.PageInfo?) : super(edges, pageInfo)
@@ -15,7 +16,11 @@ class CharacterConnection : TConnection<CharacterEdge> {
                 it.addParam("sort", sort)
 
                 val edgesObject = GraphQLObject("edges")
-                edgesObject.addObject(Character.createDetailsGraphQLObject("node"))
+                edgesObject.addObject(
+                    Character.createDetailsGraphQLObject(
+                        "node"
+                    )
+                )
                 edgesObject.addField("role")
                 it.addObject(edgesObject)
 

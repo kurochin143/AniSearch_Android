@@ -1,7 +1,6 @@
 package com.example.israel.anisearch.repository
 
-import com.example.israel.anisearch.anilist_api.*
-import io.reactivex.Observable
+import com.example.israel.anisearch.api.*
 import io.reactivex.Single
 
 abstract class AniSearchRepository {

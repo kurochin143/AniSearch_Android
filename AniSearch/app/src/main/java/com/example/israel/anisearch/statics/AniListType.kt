@@ -1,4 +1,4 @@
-package com.example.israel.anisearch.anilist_api.statics
+package com.example.israel.anisearch.statics
 
 class AniListType {
     companion object {

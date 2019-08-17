@@ -1,9 +1,9 @@
 package com.example.israel.anisearch.repository
 
-import com.example.israel.anisearch.anilist_api.*
+import com.example.israel.anisearch.api.*
 import com.example.israel.anisearch.graphql.GraphQLQuery
 import com.example.israel.anisearch.graphql.GraphQLQueryBuilder
-import io.reactivex.Observable
+import com.example.israel.anisearch.model.data.*
 import io.reactivex.Single
 
 class AniSearchRepositoryImpl(private val aniListApiService: AniListApiService) : AniSearchRepository() {

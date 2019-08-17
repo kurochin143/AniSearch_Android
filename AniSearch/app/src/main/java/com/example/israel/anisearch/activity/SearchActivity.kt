@@ -6,7 +6,7 @@ import android.widget.ArrayAdapter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.MemoryCategory
 import com.example.israel.anisearch.R
-import com.example.israel.anisearch.anilist_api.statics.AniListType
+import com.example.israel.anisearch.statics.AniListType
 import com.example.israel.anisearch.fragment.SearchResultsFragment
 import kotlinx.android.synthetic.main.activity_search.*
 

@@ -1,7 +1,6 @@
 package com.example.israel.anisearch.adapter
 
 import android.graphics.drawable.Drawable
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,14 +11,17 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.example.israel.anisearch.R
-import com.example.israel.anisearch.anilist_api.Character
-import com.example.israel.anisearch.anilist_api.CharacterConnection
-import com.example.israel.anisearch.anilist_api.Page
+import com.example.israel.anisearch.model.data.Character
+import com.example.israel.anisearch.model.data.CharacterConnection
+import com.example.israel.anisearch.model.data.Page
 import kotlinx.android.synthetic.main.item_character.view.*
 
 class MediaDetailsCharactersAdapter: androidx.recyclerview.widget.RecyclerView.Adapter<MediaDetailsCharactersAdapter.ContentViewHolder>() {
 
-    private var characterConnection = CharacterConnection(mutableListOf(), Page.PageInfo(0, 0))
+    private var characterConnection = CharacterConnection(
+        mutableListOf(),
+        Page.PageInfo(0, 0)
+    )
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): ContentViewHolder {
         return ContentViewHolder(LayoutInflater.from(p0.context).inflate(R.layout.item_character, p0, false))

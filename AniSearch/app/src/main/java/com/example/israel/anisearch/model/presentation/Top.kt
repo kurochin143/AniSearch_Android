@@ -1,10 +1,10 @@
-package com.example.israel.anisearch.model
+package com.example.israel.anisearch.model.presentation
 
-import com.example.israel.anisearch.anilist_api.Anime
-import com.example.israel.anisearch.anilist_api.Character
-import com.example.israel.anisearch.anilist_api.Manga
-import com.example.israel.anisearch.anilist_api.Staff
-import com.example.israel.anisearch.anilist_api.statics.AniListType
+import com.example.israel.anisearch.model.data.Anime
+import com.example.israel.anisearch.model.data.Character
+import com.example.israel.anisearch.model.data.Manga
+import com.example.israel.anisearch.model.data.Staff
+import com.example.israel.anisearch.statics.AniListType
 
 class Top(
     var type: String,
@@ -24,7 +24,12 @@ class Top(
                 title.english ?: title.romaji ?: title.native ?: NO_NAME
             }
 
-            return Top(AniListType.ANIME, id, name, anime.coverImage?.medium)
+            return Top(
+                AniListType.ANIME,
+                id,
+                name,
+                anime.coverImage?.medium
+            )
         }
 
         fun fromManga(manga: Manga): Top? {
@@ -36,7 +41,12 @@ class Top(
                 title.english ?: title.romaji ?: title.native ?: NO_NAME
             }
 
-            return Top(AniListType.MANGA, id, name, manga.coverImage?.medium)
+            return Top(
+                AniListType.MANGA,
+                id,
+                name,
+                manga.coverImage?.medium
+            )
         }
 
         fun fromCharacter(character: Character): Top? {
@@ -48,7 +58,12 @@ class Top(
                 characterName.getFullName() ?: characterName.native ?: NO_NAME
             }
 
-            return Top(AniListType.CHARACTER, id, name, character.image?.medium)
+            return Top(
+                AniListType.CHARACTER,
+                id,
+                name,
+                character.image?.medium
+            )
         }
 
         fun fromStaff(staff: Staff): Top? {

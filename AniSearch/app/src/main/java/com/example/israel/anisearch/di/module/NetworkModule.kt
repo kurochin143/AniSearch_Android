@@ -1,6 +1,6 @@
 package com.example.israel.anisearch.di.module
 
-import com.example.israel.anisearch.anilist_api.AniListApiService
+import com.example.israel.anisearch.api.AniListApiService
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides

@@ -1,11 +1,10 @@
-package com.example.israel.anisearch.anilist_api
+package com.example.israel.anisearch.model.data
 
 import com.example.israel.anisearch.graphql.GraphQLObject
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-class Character {
-
+class Staff {
     @SerializedName("id")
     @Expose
     var id: Int? = null
@@ -50,7 +49,6 @@ class Character {
     }
 
     class Image {
-
         @SerializedName("medium")
         @Expose
         var medium: String? = null
@@ -70,18 +68,10 @@ class Character {
 
     companion object {
         fun createSearchGraphQLObject(sort: String, search: String?): GraphQLObject {
-            return GraphQLObject("characters").also {
+            return GraphQLObject("staff").also {
                 it.addParam("sort", sort)
                 if (search != null) it.addParam("search", "\"$search\"")
 
-                it.addField("id")
-                it.addObject(Name.createGraphQLObject())
-                it.addObject(Image.createGraphQLObject())
-            }
-        }
-
-        fun createDetailsGraphQLObject(name: String): GraphQLObject {
-            return GraphQLObject(name).also {
                 it.addField("id")
                 it.addObject(Name.createGraphQLObject())
                 it.addObject(Image.createGraphQLObject())

@@ -1,4 +1,4 @@
-package com.example.israel.anisearch.anilist_api
+package com.example.israel.anisearch.model.data
 
 import com.example.israel.anisearch.graphql.GraphQLObject
 import com.google.gson.annotations.Expose
@@ -139,7 +139,13 @@ open class Media : Serializable {
             return GraphQLObject("Media").also {
                 it.addParam("id", id.toString())
 
-                it.addObject(CharacterConnection.createGraphQLObject(page, perPage, sort))
+                it.addObject(
+                    CharacterConnection.createGraphQLObject(
+                        page,
+                        perPage,
+                        sort
+                    )
+                )
             }
         }
     }

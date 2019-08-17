@@ -3,7 +3,6 @@ package com.example.israel.anisearch.adapter
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,9 +14,9 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.example.israel.anisearch.R
-import com.example.israel.anisearch.anilist_api.statics.AniListType
-import com.example.israel.anisearch.model.SearchResult
-import com.example.israel.anisearch.model.SearchResults
+import com.example.israel.anisearch.statics.AniListType
+import com.example.israel.anisearch.model.presentation.SearchResult
+import com.example.israel.anisearch.model.presentation.SearchResults
 import kotlinx.android.synthetic.main.item_search_result.view.*
 import kotlinx.android.synthetic.main.item_search_result_load_more.view.*
 
@@ -30,7 +29,8 @@ class SearchResultsAdapter(
         private const val TYPE_LOAD_MORE = 1
     }
 
-    private var searchResults: SearchResults = SearchResults(AniListType.ANIME, ArrayList(), 0, 0)
+    private var searchResults: SearchResults =
+        SearchResults(AniListType.ANIME, ArrayList(), 0, 0)
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
         return when(p1) {
