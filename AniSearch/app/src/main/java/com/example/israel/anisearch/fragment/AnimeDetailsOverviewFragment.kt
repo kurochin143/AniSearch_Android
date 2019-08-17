@@ -3,7 +3,7 @@ package com.example.israel.anisearch.fragment
 
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +14,7 @@ import com.example.israel.anisearch.anilist_api.Anime
 import kotlinx.android.synthetic.main.fragment_anime_details_overview.*
 import kotlinx.android.synthetic.main.item_anime_details_genre.view.*
 
-class AnimeDetailsOverviewFragment : Fragment() {
+class AnimeDetailsOverviewFragment : androidx.fragment.app.Fragment() {
 
     private lateinit var animeDetails: Anime
     private var image: Bitmap? = null

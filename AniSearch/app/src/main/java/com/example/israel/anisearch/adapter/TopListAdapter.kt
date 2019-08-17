@@ -3,7 +3,7 @@ package com.example.israel.anisearch.adapter
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,7 +18,7 @@ import com.example.israel.anisearch.R
 import com.example.israel.anisearch.model.Top
 import kotlinx.android.synthetic.main.item_top.view.*
 
-class TopListAdapter(private val onItemClickedListener: OnItemClickedListener) : RecyclerView.Adapter<TopListAdapter.ViewHolder>() {
+class TopListAdapter(private val onItemClickedListener: OnItemClickedListener) : androidx.recyclerview.widget.RecyclerView.Adapter<TopListAdapter.ViewHolder>() {
     private var topList: MutableList<Top> = ArrayList()
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): ViewHolder {
@@ -43,7 +43,7 @@ class TopListAdapter(private val onItemClickedListener: OnItemClickedListener) :
         notifyDataSetChanged()
     }
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class ViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
         fun bind(top: Top, onItemClickedListener: OnItemClickedListener) {
 
             val rankStr = "# ${adapterPosition + 1}"

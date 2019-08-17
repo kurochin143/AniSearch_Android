@@ -1,7 +1,7 @@
 package com.example.israel.anisearch.adapter
 
 import android.graphics.drawable.Drawable
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +17,7 @@ import com.example.israel.anisearch.anilist_api.CharacterConnection
 import com.example.israel.anisearch.anilist_api.Page
 import kotlinx.android.synthetic.main.item_character.view.*
 
-class MediaDetailsCharactersAdapter: RecyclerView.Adapter<MediaDetailsCharactersAdapter.ContentViewHolder>() {
+class MediaDetailsCharactersAdapter: androidx.recyclerview.widget.RecyclerView.Adapter<MediaDetailsCharactersAdapter.ContentViewHolder>() {
 
     private var characterConnection = CharacterConnection(mutableListOf(), Page.PageInfo(0, 0))
 
@@ -47,7 +47,7 @@ class MediaDetailsCharactersAdapter: RecyclerView.Adapter<MediaDetailsCharacters
         notifyItemRangeChanged(oldSize, characterConnection.edges!!.size + 1)
     }
 
-    class ContentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class ContentViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
 
         fun bind(character: Character) {
             itemView.i_character_t_name.text = character.name?.getFullName()

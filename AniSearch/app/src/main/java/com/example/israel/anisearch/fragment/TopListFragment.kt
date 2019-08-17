@@ -1,13 +1,13 @@
 package com.example.israel.anisearch.fragment
 
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
@@ -28,7 +28,7 @@ import kotlinx.android.synthetic.main.fragment_top_list.*
 import kotlinx.android.synthetic.main.layout_top_list.*
 import javax.inject.Inject
 
-class TopListFragment : Fragment() {
+class TopListFragment : androidx.fragment.app.Fragment() {
 
     companion object {
         private const val PER_PAGE = 50
@@ -62,7 +62,7 @@ class TopListFragment : Fragment() {
         // adapter
         topListAdapter = TopListAdapter(object: TopListAdapter.OnItemClickedListener {
             override fun onItemClicked(v: View, imageView: ImageView, top: Top, image: Bitmap?) {
-                val fragment: Fragment = when (top.type) {
+                val fragment: androidx.fragment.app.Fragment = when (top.type) {
                     AniListType.ANIME -> AnimeDetailsFragment.newInstance(top.id, image)
                     else -> return
                 }
@@ -99,7 +99,11 @@ class TopListFragment : Fragment() {
 
         // setup recycler view
         f_top_list_r.setHasFixedSize(true)
-        f_top_list_r.layoutManager = LinearLayoutManager(context!!, LinearLayoutManager.VERTICAL, false)
+        f_top_list_r.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(
+            context!!,
+            androidx.recyclerview.widget.LinearLayoutManager.VERTICAL,
+            false
+        )
         f_top_list_r.adapter = topListAdapter
 
         // spinner

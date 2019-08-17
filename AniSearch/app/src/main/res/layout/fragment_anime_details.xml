@@ -6,7 +6,7 @@
               android:orientation="vertical"
              tools:context=".fragment.AnimeDetailsFragment">
 
-    <android.support.design.widget.TabLayout
+    <com.google.android.material.tabs.TabLayout
             android:id="@+id/f_anime_details_tl"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -16,11 +16,11 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-        <android.support.v4.view.ViewPager
+        <androidx.viewpager.widget.ViewPager
                 android:id="@+id/f_anime_details_vp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-        </android.support.v4.view.ViewPager>
+        </androidx.viewpager.widget.ViewPager>
 
         <ProgressBar
                 android:id="@+id/f_anime_details_pb"

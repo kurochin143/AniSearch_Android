@@ -1,12 +1,12 @@
 package com.example.israel.anisearch.fragment
 
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.widget.GridLayoutManager
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.GridLayoutManager
 import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
@@ -25,7 +25,7 @@ import com.example.israel.anisearch.view_model.factory.SearchVMFactory
 import kotlinx.android.synthetic.main.fragment_search_results.*
 import javax.inject.Inject
 
-class SearchResultsFragment : Fragment() {
+class SearchResultsFragment : androidx.fragment.app.Fragment() {
 
     private var isReplaced: Boolean = false
 
@@ -70,7 +70,7 @@ class SearchResultsFragment : Fragment() {
             }
         }, object: SearchResultsAdapter.OnItemClickedListener {
             override fun onItemClicked(v: View, imageView: ImageView, searchResult: SearchResult, image: Bitmap?) {
-                val fragment: Fragment = when (searchResult.type) {
+                val fragment: androidx.fragment.app.Fragment = when (searchResult.type) {
                     AniListType.ANIME -> AnimeDetailsFragment.newInstance(searchResult.id, image)
                     else -> return
                 }
@@ -121,7 +121,7 @@ class SearchResultsFragment : Fragment() {
 
         // recycler view
         f_search_results_r.setHasFixedSize(true)
-        f_search_results_r.layoutManager = GridLayoutManager(context, SPAN_COUNT)
+        f_search_results_r.layoutManager = androidx.recyclerview.widget.GridLayoutManager(context, SPAN_COUNT)
         f_search_results_r.adapter = searchResultsAdapter
 
         if (isReplaced) {

@@ -3,7 +3,7 @@ package com.example.israel.anisearch.adapter
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,7 +24,7 @@ import kotlinx.android.synthetic.main.item_search_result_load_more.view.*
 class SearchResultsAdapter(
     private var onLoadNextPageListener: OnLoadNextPageListener,
     private var onItemClickedListener: OnItemClickedListener
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+) : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
     companion object {
         private const val TYPE_CONTENT = 0
         private const val TYPE_LOAD_MORE = 1
@@ -32,7 +32,7 @@ class SearchResultsAdapter(
 
     private var searchResults: SearchResults = SearchResults(AniListType.ANIME, ArrayList(), 0, 0)
 
-    override fun onCreateViewHolder(p0: ViewGroup, p1: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(p0: ViewGroup, p1: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
         return when(p1) {
             TYPE_CONTENT -> ContentViewHolder(LayoutInflater.from(p0.context).inflate(R.layout.item_search_result, p0, false))
             else -> LoadMoreViewHolder(LayoutInflater.from(p0.context).inflate(R.layout.item_search_result_load_more, p0, false))
@@ -43,7 +43,7 @@ class SearchResultsAdapter(
         return searchResults.searchResults.size + 1
     }
 
-    override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
         if (viewHolder is ContentViewHolder) {
             val searchResult = searchResults.searchResults[position]
             viewHolder.bind(searchResult, onItemClickedListener)
@@ -77,7 +77,7 @@ class SearchResultsAdapter(
         notifyItemRangeChanged(oldSize, searchResults.searchResults.size + 1)
     }
 
-    class ContentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class ContentViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
         fun bind(searchResult: SearchResult, onItemClickedListener: OnItemClickedListener) {
             itemView.i_search_result_t_name.text = searchResult.name
 
@@ -135,7 +135,7 @@ class SearchResultsAdapter(
 
     }
 
-    class LoadMoreViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+    class LoadMoreViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView)
 
     interface OnLoadNextPageListener {
         fun loadNextPage(page: Int)

@@ -1,11 +1,11 @@
 package com.example.israel.anisearch.fragment
 
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,7 +19,7 @@ import com.example.israel.anisearch.view_model.factory.AnimeDetailsVMFactory
 import kotlinx.android.synthetic.main.fragment_anime_details.*
 import javax.inject.Inject
 
-class AnimeDetailsFragment : Fragment() {
+class AnimeDetailsFragment : androidx.fragment.app.Fragment() {
 
     private var animeId = 0
     private var image: Bitmap? = null

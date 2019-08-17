@@ -1,28 +1,28 @@
 package com.example.israel.anisearch.adapter
 
 import android.graphics.Bitmap
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
 import com.example.israel.anisearch.anilist_api.Anime
 import com.example.israel.anisearch.fragment.MediaDetailsCharactersFragment
 import com.example.israel.anisearch.fragment.AnimeDetailsOverviewFragment
 import java.lang.RuntimeException
 
 class AnimeDetailsPagerAdapter(
-    fragmentManager: FragmentManager,
+    fragmentManager: androidx.fragment.app.FragmentManager,
     private val animeDetails: Anime,
     private val image: Bitmap?
-) : FragmentPagerAdapter(fragmentManager) {
+) : androidx.fragment.app.FragmentPagerAdapter(fragmentManager) {
 
-    override fun getItem(p0: Int): Fragment {
+    override fun getItem(p0: Int): androidx.fragment.app.Fragment {
         return when (p0) {
             0 -> AnimeDetailsOverviewFragment.newInstance(animeDetails, image)
             1 -> MediaDetailsCharactersFragment.newInstance(animeDetails.id!!)
-            2 -> Fragment()
-            3 -> Fragment()
-            4 -> Fragment()
-            5 -> Fragment()
+            2 -> androidx.fragment.app.Fragment()
+            3 -> androidx.fragment.app.Fragment()
+            4 -> androidx.fragment.app.Fragment()
+            5 -> androidx.fragment.app.Fragment()
             else -> throw RuntimeException("Out of bounds")
         }
     }

@@ -1,7 +1,7 @@
 package com.example.israel.anisearch.view
 
 import android.content.Context
-import android.support.v7.widget.CardView
+import androidx.cardview.widget.CardView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
@@ -45,7 +45,7 @@ class SearchOptionsViewHolder(private val root: ViewGroup, private val defaultNa
         val viewIndex = root.childCount
         val inflater = root.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         inflater.inflate(R.layout.layout_search_option, root)
-        val view = root.getChildAt(viewIndex) as CardView
+        val view = root.getChildAt(viewIndex) as androidx.cardview.widget.CardView
         view.setCardBackgroundColor(color)
         view.setOnClickListener {
             removeOption(viewIndex)

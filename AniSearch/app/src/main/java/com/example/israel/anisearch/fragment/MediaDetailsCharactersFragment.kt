@@ -1,11 +1,11 @@
 package com.example.israel.anisearch.fragment
 
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.widget.GridLayoutManager
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.GridLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,7 +20,9 @@ import com.example.israel.anisearch.view_model.factory.AnimeDetailsVMFactory
 import kotlinx.android.synthetic.main.fragment_media_details_characters.*
 import javax.inject.Inject
 
-class MediaDetailsCharactersFragment : Fragment() {
+class MediaDetailsCharactersFragment : androidx.fragment.app.Fragment() {
+
+    private var isNew = true
 
     private var animeId: Int = -1
 
@@ -83,10 +85,12 @@ class MediaDetailsCharactersFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         f_media_details_characters_r.setHasFixedSize(true)
-        f_media_details_characters_r.layoutManager = GridLayoutManager(context, SPAN_COUNT)
+        f_media_details_characters_r.layoutManager = androidx.recyclerview.widget.GridLayoutManager(context, SPAN_COUNT)
         f_media_details_characters_r.adapter = mediaDetailsCharactersAdapter
 
-        animeDetailsViewModel.getMediaCharacters(animeId, 1, PER_PAGE, CharacterSearchSort.ROLE)
-
+        if (isNew) {
+            isNew = false
+            animeDetailsViewModel.getMediaCharacters(animeId, 1, PER_PAGE, CharacterSearchSort.ROLE)
+        }
     }
 }

@@ -6,6 +6,7 @@ import com.example.israel.anisearch.di.component.MainComponent
 import com.example.israel.anisearch.di.module.AnimeDetailsModule
 import com.example.israel.anisearch.di.module.SearchModule
 import com.example.israel.anisearch.di.module.TopModule
+import com.squareup.leakcanary.LeakCanary
 
 class AniSearchApp : Application() {
 
@@ -13,6 +14,13 @@ class AniSearchApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            // This process is dedicated to LeakCanary for heap analysis.
+            // You should not init your app in this process.
+            return
+        }
+        LeakCanary.install(this)
 
         aniSearchMainComponent = DaggerMainComponent.builder().build()
     }

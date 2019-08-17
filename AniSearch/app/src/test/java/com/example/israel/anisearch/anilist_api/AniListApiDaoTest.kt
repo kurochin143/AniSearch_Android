@@ -1,13 +1,17 @@
 package com.example.israel.anisearch.anilist_api
 
+import com.example.israel.anisearch.graphql.GraphQLQuery
 import com.example.israel.anisearch.graphql.GraphQLQueryBuilder
 import org.junit.Test
 
 class AniListApiDaoTest {
 
+    private fun <T> kany(type: Class<T>): T = any<T>(type)
+
     @Test
     fun getTopAnime_QueryBuilder() {
 
+        val g = kany(GraphQLQuery::class.java)
 
         val queryBuiltStr = GraphQLQueryBuilder().also {
             it.addObject(TPage.createGraphQLObject(1, 1)

@@ -1,7 +1,7 @@
 package com.example.israel.anisearch.view_model.factory
 
-import android.arch.lifecycle.ViewModel
-import android.arch.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.example.israel.anisearch.repository.AniSearchRepository
 import com.example.israel.anisearch.view_model.SearchViewModel
 
