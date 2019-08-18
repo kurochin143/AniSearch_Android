@@ -25,7 +25,6 @@ import com.example.israel.anisearch.app.AniSearchApp
 import com.example.israel.anisearch.view_model.TopViewModel
 import com.example.israel.anisearch.view_model.factory.TopVMFactory
 import kotlinx.android.synthetic.main.fragment_top_list.*
-import kotlinx.android.synthetic.main.layout_top_list.*
 import javax.inject.Inject
 
 class TopListFragment : Fragment() {
@@ -92,14 +91,21 @@ class TopListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // error
+        topViewModel.errorLiveData.observe(this, Observer {
+            // TODO
+        })
+
         // top view model
         topViewModel.topListViewState.observe(this, Observer {
             if (it.isLoading) {
-                f_top_list_cl_requesting.visibility = View.VISIBLE
+                f_top_list_requesting.visibility = View.VISIBLE
             } else {
-                f_top_list_cl_requesting.visibility = View.GONE
+                f_top_list_requesting.visibility = View.GONE
 
-                handleTopList(it.aniListType, it.topList)
+                it.topList?.let {topList ->
+                    handleTopList(it.aniListType, topList)
+                }
             }
         })
 
@@ -130,7 +136,7 @@ class TopListFragment : Fragment() {
                     AniListType.STAFF -> topViewModel.topStaffListSelected(1, PER_PAGE)
                 }
 
-                f_top_list_cl_requesting.visibility = View.VISIBLE
+                f_top_list_requesting.visibility = View.VISIBLE
             }
         }
 
@@ -149,6 +155,7 @@ class TopListFragment : Fragment() {
     }
 
     private fun handleTopList(aniListType: AniListType, topList: MutableList<Any>) {
+        // can never be empty because this is TOP. Unless there's an error
         topListAdapter.setTopList(aniListType, topList)
     }
 }
