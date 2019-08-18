@@ -7,6 +7,6 @@ class TMediaList <T : Media> : Page() {
 
     @SerializedName("media")
     @Expose
-    var media: ArrayList<T>? = null
+    var media: MutableList<T>? = null
 
 }

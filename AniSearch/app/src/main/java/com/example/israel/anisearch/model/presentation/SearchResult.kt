@@ -7,7 +7,7 @@ import com.example.israel.anisearch.model.data.Staff
 import com.example.israel.anisearch.statics.AniListType
 
 class SearchResult(
-    var type: String,
+    var aniListType: AniListType,
     var id: Int,
     var name: String?,
     var imageUrl: String?

@@ -1,7 +1,9 @@
 package com.example.israel.anisearch.model.presentation
 
+import com.example.israel.anisearch.statics.AniListType
+
 class SearchResults(
-    var type: String,
+    var aniListType: AniListType,
     var searchResults: MutableList<SearchResult>,
     var currentPage: Int,
     var lastPage: Int

@@ -13,20 +13,22 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ImageView
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 import com.example.israel.anisearch.R
 import com.example.israel.anisearch.activity.SearchActivity
 import com.example.israel.anisearch.adapter.TopListAdapter
 import com.example.israel.anisearch.statics.AniListType
 import com.example.israel.anisearch.app.AniSearchApp
-import com.example.israel.anisearch.model.presentation.Top
 import com.example.israel.anisearch.view_model.TopViewModel
 import com.example.israel.anisearch.view_model.factory.TopVMFactory
 import kotlinx.android.synthetic.main.fragment_top_list.*
 import kotlinx.android.synthetic.main.layout_top_list.*
 import javax.inject.Inject
 
-class TopListFragment : androidx.fragment.app.Fragment() {
+class TopListFragment : Fragment() {
 
     companion object {
         private const val PER_PAGE = 50
@@ -49,20 +51,15 @@ class TopListFragment : androidx.fragment.app.Fragment() {
 
         // top view model
         topViewModel = ViewModelProviders.of(this, topVMFactory).get(TopViewModel::class.java)
-        topViewModel.getTopListLiveData().observe(this, Observer {
-            f_top_list_cl_requesting.visibility = View.GONE
-
-            if (it != null) {
-                topListAdapter.setTopList(it.topList)
-            }
-        })
 
         // adapter
         topListAdapter = TopListAdapter(object: TopListAdapter.OnItemClickedListener {
-            override fun onItemClicked(v: View, imageView: ImageView, top: Top, image: Bitmap?) {
-                val fragment: androidx.fragment.app.Fragment = when (top.type) {
-                    AniListType.ANIME -> AnimeDetailsFragment.newInstance(top.id, image)
-                    else -> return
+            override fun onItemClicked(v: View, imageView: ImageView, aniListType: AniListType, topId: Int, image: Bitmap?) {
+                val fragment: Fragment = when (aniListType) {
+                    AniListType.ANIME -> AnimeDetailsFragment.newInstance(topId, image)
+                    AniListType.MANGA -> TODO()
+                    AniListType.CHARACTER -> TODO()
+                    AniListType.STAFF -> TODO()
                 }
 
                 isReplaced = true
@@ -95,11 +92,22 @@ class TopListFragment : androidx.fragment.app.Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // top view model
+        topViewModel.topListViewState.observe(this, Observer {
+            if (it.isLoading) {
+                f_top_list_cl_requesting.visibility = View.VISIBLE
+            } else {
+                f_top_list_cl_requesting.visibility = View.GONE
+
+                handleTopList(it.aniListType, it.topList)
+            }
+        })
+
         // setup recycler view
         f_top_list_r.setHasFixedSize(true)
-        f_top_list_r.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(
+        f_top_list_r.layoutManager = LinearLayoutManager(
             context!!,
-            androidx.recyclerview.widget.LinearLayoutManager.VERTICAL,
+            RecyclerView.VERTICAL,
             false
         )
         f_top_list_r.adapter = topListAdapter
@@ -115,13 +123,11 @@ class TopListFragment : androidx.fragment.app.Fragment() {
                     return
                 }
 
-                topListAdapter.setTopList(ArrayList())
-
                 when (AniListType.fromStringArrPosition(f_top_list_s_type.selectedItemPosition)) {
-                    AniListType.ANIME -> topViewModel.getTopAnime(1, PER_PAGE)
-                    AniListType.MANGA -> topViewModel.getTopManga(1, PER_PAGE)
-                    AniListType.CHARACTER -> topViewModel.getTopCharacters(1, PER_PAGE)
-                    AniListType.STAFF -> topViewModel.getTopStaffs(1, PER_PAGE)
+                    AniListType.ANIME -> topViewModel.topAnimeListSelected(1, PER_PAGE)
+                    AniListType.MANGA -> topViewModel.topMangaListSelected(1, PER_PAGE)
+                    AniListType.CHARACTER -> topViewModel.topCharacterListSelected(1, PER_PAGE)
+                    AniListType.STAFF -> topViewModel.topStaffListSelected(1, PER_PAGE)
                 }
 
                 f_top_list_cl_requesting.visibility = View.VISIBLE
@@ -140,6 +146,9 @@ class TopListFragment : androidx.fragment.app.Fragment() {
             val intent = Intent(context, SearchActivity::class.java)
             startActivity(intent)
         }
+    }
 
+    private fun handleTopList(aniListType: AniListType, topList: MutableList<Any>) {
+        topListAdapter.setTopList(aniListType, topList)
     }
 }

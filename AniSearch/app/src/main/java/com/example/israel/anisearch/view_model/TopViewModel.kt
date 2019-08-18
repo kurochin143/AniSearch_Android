@@ -1,8 +1,6 @@
 package com.example.israel.anisearch.view_model
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.example.israel.anisearch.statics.AniListType
 import com.example.israel.anisearch.statics.CharacterSearchSort
 import com.example.israel.anisearch.statics.MediaSearchSort
@@ -10,112 +8,64 @@ import com.example.israel.anisearch.statics.StaffSearchSort
 import com.example.israel.anisearch.model.presentation.Top
 import com.example.israel.anisearch.model.presentation.TopList
 import com.example.israel.anisearch.repository.AniSearchRepository
-import io.reactivex.disposables.Disposable
+import com.example.israel.anisearch.view_state.TopListViewState
+import java.lang.Exception
 
-class TopViewModel(private val aniSearchRepository: AniSearchRepository) : ViewModel() {
+class TopViewModel(private val aniSearchRepository: AniSearchRepository) : BaseViewModel() {
 
-    private var getTopListDisposable: Disposable? = null
-    private val topListLiveData = MutableLiveData<TopList>()
+    val errorLiveData by lazy { MutableLiveData<Throwable>() }
+    val topListViewState by lazy { MutableLiveData<TopListViewState>() }
 
-    fun getTopListLiveData(): LiveData<TopList> {
-        return topListLiveData
-    }
-
-    fun getTopAnime(page: Int, perPage: Int) {
-        getTopListDisposable?.dispose()
-
-        getTopListDisposable = aniSearchRepository.searchAnime(page, perPage, null, MediaSearchSort.SCORE_DESC)
-            .map {animeSearchResult ->
-                val animeList = animeSearchResult.data?.page?.media ?: return@map null
-
-                val topList = ArrayList<Top>(animeList.size)
-                animeList.forEach { anime ->
-                    val top = Top.fromAnime(anime) ?: return@forEach
-                    topList.add(top)
-                }
-
-                return@map TopList(AniListType.ANIME, topList)
-            }
+    fun topAnimeListSelected(page: Int, perPage: Int) {
+        topListViewState.value = TopListViewState(isLoading = true)
+        addDisposable(aniSearchRepository.searchAnime(page, perPage, null, MediaSearchSort.SCORE_DESC)
             .subscribe({
-                topListLiveData.postValue(it)
+                topListViewState.postValue(TopListViewState(
+                    isLoading = false,
+                    aniListType = AniListType.ANIME,
+                    topList = it.data?.page?.media as MutableList<Any>? ?: throw Exception("Failed to load anime list")
+                ))
             }, {
-                // TODO throwable live data
-                topListLiveData.postValue(null)
-            })
+                errorLiveData.postValue(it)
+            }))
     }
 
-    fun getTopManga(page: Int, perPage: Int) {
-        getTopListDisposable?.dispose()
-
-        getTopListDisposable = aniSearchRepository.searchManga(page, perPage, null, MediaSearchSort.SCORE_DESC)
-            .map {mangaSearchResult ->
-                val mangaList = mangaSearchResult.data?.page?.media ?: return@map null
-
-                val topList = ArrayList<Top>(mangaList.size)
-                mangaList.forEach { manga ->
-                    val top = Top.fromManga(manga) ?: return@forEach
-                    topList.add(top)
-                }
-
-                return@map TopList(AniListType.MANGA, topList)
-            }
+    fun topMangaListSelected(page: Int, perPage: Int) {
+        addDisposable(aniSearchRepository.searchManga(page, perPage, null, MediaSearchSort.SCORE_DESC)
             .subscribe({
-                topListLiveData.postValue(it)
+                topListViewState.postValue(TopListViewState(
+                    isLoading = true,
+                    aniListType = AniListType.MANGA,
+                    topList = it.data?.page?.media as MutableList<Any>? ?: throw Exception("Failed to load manga list")
+                ))
             }, {
-                // TODO throwable live data
-                topListLiveData.postValue(null)
-            })
+                errorLiveData.postValue(it)
+            }))
     }
 
-    fun getTopCharacters(page: Int, perPage: Int) {
-        getTopListDisposable?.dispose()
-
-        getTopListDisposable = aniSearchRepository.searchCharacter(page, perPage, null, CharacterSearchSort.FAVOURITES_DESC)
-            .map {characterSearchResult ->
-                val characters = characterSearchResult.data?.page?.characters ?: return@map null
-
-                val topList = ArrayList<Top>(characters.size)
-                characters.forEach { character ->
-                    val top = Top.fromCharacter(character) ?: return@forEach
-                    topList.add(top)
-                }
-
-                return@map TopList(AniListType.CHARACTER, topList)
-            }
+    fun topCharacterListSelected(page: Int, perPage: Int) {
+        addDisposable(aniSearchRepository.searchCharacter(page, perPage, null, CharacterSearchSort.FAVOURITES_DESC)
             .subscribe({
-                topListLiveData.postValue(it)
+                topListViewState.postValue(TopListViewState(
+                    isLoading = true,
+                    aniListType = AniListType.CHARACTER,
+                    topList = it.data?.page?.characters as MutableList<Any>? ?: throw Exception("Failed to load character list")
+                ))
             }, {
-                // TODO throwable live data
-                topListLiveData.postValue(null)
-            })
+                errorLiveData.postValue(it)
+            }))
     }
 
-    fun getTopStaffs(page: Int, perPage: Int) {
-        getTopListDisposable?.dispose()
-
-        getTopListDisposable = aniSearchRepository.searchStaff(page, perPage, null, StaffSearchSort.FAVOURITES_DESC)
-            .map { staffSearchResult ->
-                val staffs = staffSearchResult.data?.page?.staffs ?: return@map null
-
-                val topList = ArrayList<Top>(staffs.size)
-                staffs.forEach {staff ->
-                    val top = Top.fromStaff(staff) ?: return@forEach
-                    topList.add(top)
-                }
-
-                return@map TopList(AniListType.STAFF, topList)
-            }
+    fun topStaffListSelected(page: Int, perPage: Int) {
+        addDisposable(aniSearchRepository.searchStaff(page, perPage, null, StaffSearchSort.FAVOURITES_DESC)
             .subscribe({
-                topListLiveData.postValue(it)
+                topListViewState.postValue(TopListViewState(
+                    isLoading = true,
+                    aniListType = AniListType.STAFF,
+                    topList = it.data?.page?.staffs as MutableList<Any>? ?: throw Exception("Failed to load staff list")
+                ))
             }, {
-                // TODO throwable live data
-                topListLiveData.postValue(null)
-            })
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-
-        getTopListDisposable?.dispose()
+                errorLiveData.postValue(it)
+            }))
     }
 }

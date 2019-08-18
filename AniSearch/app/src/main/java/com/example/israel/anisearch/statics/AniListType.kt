@@ -1,13 +1,13 @@
 package com.example.israel.anisearch.statics
 
-class AniListType {
-    companion object {
-        const val ANIME = "ANIME"
-        const val MANGA = "MANGA"
-        const val CHARACTER = "CHARACTER"
-        const val STAFF = "STAFF"
+enum class AniListType {
+    ANIME,
+    MANGA,
+    CHARACTER,
+    STAFF;
 
-        fun fromStringArrPosition(position: Int) : String {
+    companion object {
+        fun fromStringArrPosition(position: Int) : AniListType {
             return when (position) {
                 0 -> ANIME
                 1 -> MANGA

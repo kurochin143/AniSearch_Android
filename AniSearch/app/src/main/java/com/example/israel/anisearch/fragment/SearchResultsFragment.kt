@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.fragment.app.Fragment
 import com.example.israel.anisearch.R
 import com.example.israel.anisearch.adapter.SearchResultsAdapter
 import com.example.israel.anisearch.statics.AniListType
@@ -23,12 +24,12 @@ import com.example.israel.anisearch.view_model.factory.SearchVMFactory
 import kotlinx.android.synthetic.main.fragment_search_results.*
 import javax.inject.Inject
 
-class SearchResultsFragment : androidx.fragment.app.Fragment() {
+class SearchResultsFragment : Fragment() {
 
     private var isReplaced: Boolean = false
 
     private lateinit var query: String
-    private lateinit var type: String
+    private lateinit var aniListType: AniListType
     private var searchResultsAdapter: SearchResultsAdapter? = null
 
     @Inject
@@ -39,14 +40,14 @@ class SearchResultsFragment : androidx.fragment.app.Fragment() {
     companion object {
         private const val SPAN_COUNT = 3
         private const val ARG_QUERY = "query"
-        private const val ARG_TYPE = "type"
+        private const val ARG_ANI_LIST_TYPE = "ani_list_type"
         private const val PER_PAGE: Int = 50
 
-        fun newInstance(query: String, type: String) =
+        fun newInstance(query: String, aniListType: AniListType) =
             SearchResultsFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_QUERY, query)
-                    putString(ARG_TYPE, type)
+                    putSerializable(ARG_ANI_LIST_TYPE, aniListType)
                 }
             }
     }
@@ -55,7 +56,7 @@ class SearchResultsFragment : androidx.fragment.app.Fragment() {
         super.onCreate(savedInstanceState)
         arguments?.let {
             query = it.getString(ARG_QUERY)!!
-            type = it.getString(ARG_TYPE)!!
+            aniListType = it.getSerializable(ARG_ANI_LIST_TYPE)!! as AniListType
         }
 
         // inject
@@ -67,10 +68,12 @@ class SearchResultsFragment : androidx.fragment.app.Fragment() {
                 search(page)
             }
         }, object: SearchResultsAdapter.OnItemClickedListener {
-            override fun onItemClicked(v: View, imageView: ImageView, searchResult: SearchResult, image: Bitmap?) {
-                val fragment: androidx.fragment.app.Fragment = when (searchResult.type) {
-                    AniListType.ANIME -> AnimeDetailsFragment.newInstance(searchResult.id, image)
-                    else -> return
+            override fun onItemClicked(v: View, imageView: ImageView, aniListType: AniListType, searchResultId: Int, image: Bitmap?) {
+                val fragment: Fragment = when (aniListType) {
+                    AniListType.ANIME -> AnimeDetailsFragment.newInstance(searchResultId, image)
+                    AniListType.MANGA -> TODO()
+                    AniListType.CHARACTER -> TODO()
+                    AniListType.STAFF -> TODO()
                 }
 
                 isReplaced = true
@@ -131,7 +134,7 @@ class SearchResultsFragment : androidx.fragment.app.Fragment() {
     }
 
     private fun search(page: Int) {
-        when (type) {
+        when (aniListType) {
             AniListType.ANIME -> searchViewModel.searchAnime(page, PER_PAGE, query, MediaSearchSort.SEARCH_MATCH)
             AniListType.MANGA -> searchViewModel.searchManga(page, PER_PAGE, query, MediaSearchSort.SEARCH_MATCH)
             AniListType.CHARACTER -> searchViewModel.searchCharacter(page, PER_PAGE, query, CharacterSearchSort.SEARCH_MATCH)

@@ -32,7 +32,7 @@ class TopViewModelTest {
         val mockObserver= mock(Observer::class.java) as Observer<TopList>
 
         viewModel.getTopListLiveData().observeForever(mockObserver)
-        viewModel.getTopAnime(1, 1)
+        viewModel.topAnimeListSelected(1, 1)
 
         verify(mockObserver).onChanged(kany(TopList::class.java))
     }
